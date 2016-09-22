@@ -1,0 +1,128 @@
+{% extends 'base_page.html' %}
+
+{% block head_tags %}
+  <meta name="fragment" content="!">
+  <meta name="description" content="Course planning tool with reviews for courses and professors at the University of Waterloo.">
+{% endblock %}
+
+{% block stylesheets %}
+  <link rel="stylesheet" href="{{ '/static/css/index_page.css'|version }}">
+{% endblock %}
+
+{% block head_misc %}
+  <link rel="prerender" href="/courses">
+{% endblock %}
+
+{% block navbar %}
+  <ul class="nav pull-right">
+    {% if current_user %}
+      <li class="dropdown">
+        <a class="nav-item dropdown-toggle" data-toggle="dropdown">
+          <i class="icon-caret-down"></i>
+        </a>
+        <ul class="dropdown-menu">
+         <li>
+           <a href="/profile">
+             <i class="icon-signin"></i> My Profile
+           </a>
+         </li>
+         <li>
+            <a class="signout-btn">
+              <i class="icon-signout"></i> Sign out
+            </a>
+          </li>
+        </ul>
+      </li>
+    {% else %}
+      <li>
+        <a class="nav-item" data-toggle="modal" role="button" data-target=".email-login-modal">
+          Sign In
+        </a>
+      </li>
+    {% endif %}
+  </ul>
+{% endblock %}
+
+{% set nav_item = "landing" %}
+
+{% block header %}
+<div id="landing-header">
+  <div class="sign-up-box">
+    <div class="sign-up-content">
+
+{# 0x7FF028
+        <h1 class="welcome">Join 11000+ UW students on Flow</h1>
+0x7ff035 #}
+        <h1 class="welcome">Keep informed, Boost the GPA.</h1>
+      {# TODO(mack): make the button and facepile use backbone view in sign_in.html #}
+{# 0x7FF028
+        <p class="lead tagline">
+          Plan courses. See what your friends are taking.<br>
+          Export your class and exam schedule.
+        </p>
+
+      <div class="fb-login-button">
+        <div class="fb-logo-box">
+          <img class="fb-logo-f" src="/static/img/f-6-25.png">
+        </div>
+        <span class="fb-login-text">Sign in with Facebook</span>
+      </div>
+
+      <div class="permission-text">
+        <i class="icon-lock"></i> We'll never post without your permission.
+        Alternatively,&nbsp;
+        <a class="email-link" data-toggle="modal" role="button" data-target=".email-signup-modal">
+          <i class="icon-envelope-alt"></i>&nbsp; sign up with email.
+        </a>
+      </div>
+0x7ff035 #}
+
+      <div class="tabbable">
+        <ul class="nav nav-pills">
+          <li class="active"><a href="#Courses" data-toggle="tab">Courses</a></li>
+          <li><a href="#Profs" data-toggle="tab">Profs</a></li>
+          <li><a href="#Classmates" data-toggle="tab">Classmates</a></li>
+          <li><a href="#Topic" data-toggle="tab">Topic</a></li>
+        </ul>
+        <div class="tab-content">
+          <div class="tab-pane active" id="Courses"></div>
+          <div class="tab-pane" id="Profs"></div>
+          <div class="tab-pane" id="Classmates"></div>
+          <div class="tab-pane" id="Topic"></div>
+        </div>
+      </div>
+
+      {# TODO(ykr): hyperlinks...
+      <form class="navbar-form pull-left">
+        <input type="text" class="span8" placeholder="Search Courses/Profs/Friends..."></input>
+        <button type="button" class="btn"><i class="icon-search"></i></button>
+      </form>#}
+      <div class="unified-search-bar"></div>
+
+      <div class="sign-in-hint">
+        {% if current_user %}
+        <p>Hello, <a href="/profile">{{ current_user.name }}</a>.</p>
+        {% else %}
+        <p><a data-toggle="modal" data-target=".email-login-modal">Sign IN</a> to explore courses</p>
+        {% endif %}
+      </div>
+      {# FIXME(Sandy): Permission requests after login now gives
+      us a cross-domain request error. I suspect it's because we're not
+      longer doing FB login in an iFrame. Luckily, we still seem to be
+      getting data back for the FB.api requests. Worry later? #}
+      {# Note: data-app-id is set in facebook.js #}
+{# 0x7FF028
+      <div class="fb-facepile" data-max-rows="1" data-width="350"></div>
+0x7ff035 #}
+
+    </div>
+  </div>
+  <i class="header-bg"></i>
+</div>
+{% endblock header %}
+
+{% block body %}
+{# 0x7FF028
+<div id="photo-credit">Photo by Paulom Shah</div>
+0x7ff035 #}
+{% endblock body %}

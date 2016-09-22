@@ -1,0 +1,22 @@
+.exam-table {
+  margin-bottom: 0;
+  background: white;
+
+  td {
+    vertical-align: middle;
+
+    p {
+      margin-bottom: 6px;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+
+}
+
+.last-updated {
+  padding-top: 7px;
+  display: block;
+}

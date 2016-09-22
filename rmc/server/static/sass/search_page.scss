@@ -1,0 +1,131 @@
+@import 'base';
+@import 'course';
+@import 'sign_in';
+@import 'variables';
+
+header {
+  padding-top: 15px;
+  h1 {
+    margin-left: 35px;
+  }
+}
+
+.container-fluid {
+  min-width: 1200px;
+}
+
+#course-search-container {
+  .course-search-options {
+
+    margin-left: 35px;
+    border: 1px solid #DDD;
+    background-color: #F7F7F7;
+    padding-bottom: 0;
+    margin-top: 15px;
+    margin-bottom: 30px;
+    padding: 15px ;
+    position: relative;
+    height: 100px;
+
+    .keywords-container {
+      position: absolute;
+      left: -8px;
+      right: -8px;
+      width: auto;
+      @include box-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
+
+      &:before {
+        border-left: 7px solid transparent;
+        left: 0;
+      }
+
+      &:after {
+        border-right: 7px solid transparent;
+        right: 0;
+      }
+
+      &:before, &:after {
+        content: " ";
+        display: block;
+        border-bottom: 8px solid #CCC;
+        width: 0;
+        height: 15px;
+        position: absolute;
+        top: -22px;
+      }
+
+      .keywords {
+        @include box-sizing(border-box);
+        width: 100%;
+        padding-bottom: 0;
+        padding-left: 52px;
+        line-height: 44px;
+        height: 60px;
+        font-size: 40px;
+        border-radius: 0;
+      }
+
+      .icon-search {
+        position: absolute;
+        color: rgba(0, 0, 0, 0.38);
+        font-size: 35px;
+        left: 15px;
+        top: 24px;
+      }
+    }
+
+    .course-search-form {
+      @extend .clearfix;
+      margin-top: 70px;
+      margin-bottom: 0;
+
+      .sort-options {
+        display: inline-block;
+        float: none;
+        margin-top: -5px;  // TODO(david): Don't hardcode this.
+        margin-left: 4px;
+
+        .btn {
+          border-radius: 0;
+        }
+      }
+
+      .nav.nav-pills > li > a {
+        padding-left: 7px;
+        padding-right: 7px;
+      }
+
+      .dropdown {
+        display: inline-block;
+        float: none;
+        .dropdown-toggle {
+          $side-padding: 3px;
+          padding-left: $side-padding;
+          padding-right: $side-padding;
+        }
+      }
+    }
+  }
+
+  .course-collection {
+    list-style: none;
+    margin-left: 0px;
+  }
+
+  .loader-container {
+    text-align: center;
+    .loader {
+      position: absolute;
+      // TODO(mack): use sass so we can set image directory
+      display: inline-block;
+      background: url('/static/img/bar-loader.gif') no-repeat;
+      width: 16px;
+      height: 11px;
+    }
+  }
+}
+
+#site-footer {
+  height: 40px;
+  margin-top: 0;
+}

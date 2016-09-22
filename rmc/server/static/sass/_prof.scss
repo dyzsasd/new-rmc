@@ -1,0 +1,45 @@
+@import 'review';
+@import '_prof_info';
+
+.expandable-prof {
+  position: relative;
+  padding-bottom: 52px;
+  background-image: url(/static/img/lightpaperfibers.png);
+
+  &.no-hidden {
+    padding-bottom: 21px;
+  }
+
+  .prof-picture {
+    float: left;
+    width: 30%;
+  }
+
+  .prof-rating-container .rating-box {
+    float: right;
+    margin-bottom: 10px;
+  }
+
+  .toggle-reviews {
+    background-color: rgba(0, 0, 0, 0.06);
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 5px;
+    padding-left: 20%;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: lighten($textColor, 20%);
+    z-index: 1;
+    @include border-radius(0 0 4px 4px);
+    @include transition(all 0.2s ease-out);
+
+    &:hover {
+      @include transition(all 0.2s ease-out);
+      text-decoration: none;
+      color: white;
+      background-color: rgba(0, 0, 0, 0.6);
+    }
+  }
+}

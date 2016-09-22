@@ -1,0 +1,29 @@
+.author {
+  text-align: right;
+  padding-right: 10px;
+}
+
+.comment-text {
+  $inner-color: rgba(0, 0, 0, 0.06);
+  $triangle-size: 7px;
+  $inner-padding: 12px;
+
+  position: relative;
+  @include border-radius(7px);
+  background-color: $inner-color;
+  padding: $inner-padding;
+
+  // Speech bubble triangle inner
+  &:after {
+    position: absolute;
+    content: ' ';
+    width: 0;
+    height: 0;
+    right: 0;
+    left: -12px;
+    top: 11px;
+    border: ($triangle-size - 1px) solid;
+    border-color: $inner-color $inner-color transparent transparent;
+    @include border-radius(1px 0 0 0);
+  }
+}

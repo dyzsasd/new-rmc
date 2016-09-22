@@ -1,0 +1,70 @@
+{% import 'macros.html' as macros %}
+
+{% call macros.us_template('ratings-tpl') %}
+<div class="ratings">
+  <% ratings.each(function(rating) { %>
+    <div class="row-fluid"
+        title="<%- rating.getLikes() %> of <%- rating.get('count') %> think this <%- subject %> was <%- rating.getDisplayName() %>">
+      <div class="rating-name span2">
+        <%- capitalize(rating.getDisplayName()) %>
+      </div>
+      <div class="rating-bar-span span6">
+        <div class="shown-rating">
+          <div class="rating-progress progress">
+            <div class="rating-bar bar active positive bar-success" style="width: 0%;"></div>
+          </div>
+        </div>
+      </div>
+      <div class="span1 rating-num-span">
+        <%- rating.getDisplayRating('') %>
+      </div>
+      <div class="shown-rating-num rating-count-span span3">
+        <span class="muted"><%- rating.get('count') %> <%-
+          pluralize(rating.get('count'), 'rating') %></span>
+      </div>
+    </div>
+    <% }); %>
+</div>
+{% endcall %}
+
+{% call macros.us_template('rating-box-tpl') %}
+<div class="rating">
+  <%- getDisplayRating(rating, count) %><!--
+  --><% if (count > 0) { %><sup class="percent">%</sup><% } %>
+</div>
+<div class="num-ratings">
+  <%- count %> <%- pluralize(count, 'rating', 'ratings') %>
+</div>
+{% endcall %}
+
+{% call macros.us_template('binary-rating-tpl') %}
+<div class="row-fluid <%- read_only ? 'read-only' : 'editable' %>">
+  <span class="span5 choice-name"><%- capitalize(name) %>?</span>
+  <span class="span7 btn-group rating-choices">
+    <button type="button" class="btn yes-btn">
+      <i class="thumb-icon icon-thumbs-up"></i>
+      Yes
+    </button>
+    <button type="button" class="btn no-btn">
+      <i class="thumb-icon icon-thumbs-down"></i>
+      No
+    </button>
+  </span>
+</div>
+{% endcall %}
+
+{% call macros.us_template('voting-tpl') %}
+{# TODO(david): Remove hardcode #}
+<div>
+  <button type="button" class="btn yes-btn" data-placement="left"
+      title="I liked this course">
+    <i class="thumb-icon icon-thumbs-up"></i>
+  </button>
+</div>
+<div>
+  <button type="button" class="btn no-btn" data-placement="left"
+      title="I disliked this course">
+    <i class="thumb-icon icon-thumbs-down"></i>
+  </button>
+</div>
+{% endcall %}

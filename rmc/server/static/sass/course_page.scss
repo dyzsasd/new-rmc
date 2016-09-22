@@ -1,0 +1,188 @@
+@import 'base';
+@import 'term';
+@import 'course';
+@import 'took_this';
+@import 'prof';
+@import 'sign_in';
+@import 'exam';
+
+body {
+  background: rgba(127, 127, 127, 0.2);
+}
+
+.course-header {
+  margin-top: 12px;
+  margin-bottom: 0;
+
+  // TODO(david): Does it actually make sense to have inconsistent title styling?
+  .row-fluid {
+    width: 800px;
+    margin: auto;
+    padding: 0 20px;
+    
+    .page-title {
+      font-size: 24px;
+      font-weight: 600;
+    }
+
+    .tabbable {
+      .nav-tabs {
+        border: 0;
+        margin: 0;
+        
+        li {
+          padding-bottom: 9px;
+          
+          a {
+            color: rgba(80,179,226,1.0);
+            border: 0;
+            border-right: 1px solid rgba(127, 127, 127, 0.5);
+            border-radius: 0;
+            padding-top: 0;
+            padding-bottom: 0;
+            margin-right: 0;
+            
+            p {
+              color: grey;
+              margin: 0;
+              font-weight: bold;
+              font-size: 20px;
+              text-align: center;
+              height: 18px;
+            }
+          }
+        }
+        
+        .active {
+          border-bottom: 2px solid rgba(80,179,226,1.0);
+        }
+      }
+    }
+  }
+  
+  #rating-box-container .rating-box {
+    float: right;
+    width: 105px;
+    height: 80px;
+    margin-top: 5px;
+
+    .rating {
+      font-size: 55px;
+      line-height: 55px;
+    }
+
+    .num-ratings {
+      font-size: 14px;
+      line-height: 14px;
+      top: 0px;
+    }
+  }
+}
+
+.tab-content {
+  padding-bottom: 10px;
+  
+  .took-this-sidebar-container {
+    width: 864px;
+    margin: 10px auto 10px auto;
+    float: none;
+  }
+}
+    
+.white-shadow-box {
+  color: grey;
+  width: 844px;
+  margin: 10px auto 0 auto;
+  padding: 10px;
+  box-shadow: 0 0 2px grey;
+  background: white;
+  
+  .span10 {
+    width: 100%;
+  }
+  
+  h3 {
+    margin-top: 0;
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 20px;
+  }
+  
+  .vert-division {
+    position: relative;
+    height: 100%;
+    overflow: hidden;
+    
+    .mini-title {
+      font-weight: bold;
+      width: 98px;
+      margin-right: 10px;
+      text-align: center;
+      vertical-align: middle;
+    }
+    
+    .mini-content {
+      font-weight: unset;
+      width: 300px;
+      margin-right: 10px;
+      text-align: left;
+      vertical-align: top;
+    }
+  }
+  
+  .add-a-review {
+    float: right;
+    background: rgba(64, 64, 250, 0.9);
+    font-weight: 700;
+    margin: 12px -10px 0 0;
+  }
+  
+  .see-all-link {
+    float: right;
+  }
+  
+  .all-ratings-box {
+    margin-left: 270px;
+    margin-bottom: 10px;
+    
+    .rating-number {
+      color: rgba(80, 179, 226, 0.9);
+      font-size: 24px;
+      font-weight: 900;
+      display: inline-block;
+      line-height: 24px;
+      overflow: hidden;
+    }
+    
+    .progress {
+      width: 24px;
+      height: 24px;
+      display: inline-block;
+      margin-bottom: 0;
+      
+      .bar {
+        background: rgba(80, 179, 226, 0.9);
+      }
+    }
+    
+    .rating-trends {
+      margin-left: 10px;
+    }
+  }
+  
+  .ratings {
+    
+    .rating-bar {
+      background: rgba(80, 179, 226, 0.9);
+    }
+  }
+}
+
+#professor-review-container {
+  width: 864px;
+  margin: 10px auto 0 auto;
+}
+
+.user-review-box {
+  margin-top: 10px;
+}

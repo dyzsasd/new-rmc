@@ -1,0 +1,12 @@
+@import 'base';
+@import 'profile';
+@import 'schedule';
+@import 'sign_in';
+
+.sign-in-modal {
+  .modal-body {
+    .fb-login-text{
+      padding: 0 35px;
+    }
+  }
+}

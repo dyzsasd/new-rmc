@@ -1,0 +1,42 @@
+{% import 'macros.html' as macros %}
+
+{% call macros.us_template('term-tpl') %}
+<div class="term-name term-bar well">
+  <% if(expand) { %>
+    <i class="arrow icon-caret-down"></i>
+  <% } else { %>
+    <i class="arrow icon-caret-right"></i>
+  <% } %>
+  <%- name %>
+</div>
+<div class="course-collection-placeholder"></div>
+<div>
+  <ul class="unstyled">
+    <li class="term-bar well">
+      <i class="icon-plus"></i>
+      <a href="/course">Add more course</a>
+    </li>
+  </ul>
+</div>
+{% endcall %}
+
+{% call macros.us_template('add-term-btn-tpl') %}
+<!--<ul class="unstyled">
+  <li class="term-bar well">
+    <i class="icon-plus"></i>
+    Add term
+  </li>
+</ul>-->
+{% endcall %}
+
+{% call macros.us_template('profile-terms-tpl') %}
+<h1>Courses</h1>
+<div class="add-term-btn-placeholder"></div>
+<!--<ul class="unstyled">
+  <li class="term-bar well">
+    <a href="/onboarding" class="onboarding-link">
+      <i class="icon-plus"></i> Add previous terms
+    </a>
+</ul>-->
+<div class="term-collection-placeholder"></div>
+{% endcall %}

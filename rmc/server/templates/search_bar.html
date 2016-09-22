@@ -1,0 +1,59 @@
+{% import 'macros.html' as macros %}
+
+{% call macros.us_template('search-bar-tpl') %}
+<form class="navbar-form" role="search">
+  <div class="input-group right-inner-addon">
+    <input type="text" class="form-control search-bar"
+        placeholder="Search courses/friends/professors">
+    <i class="icon-search"></i>
+  </div>
+</form>
+{% endcall %}
+
+{% call macros.us_template('friend-result-item-tpl') %}
+<div>
+  <img src="<%- pic %>" class="profile-pic">
+  <div class="primary-title suggestion-text">
+    <%- label %>
+  </div>
+  <div class="secondary-title suggestion-text">
+    <%= program ? _.escape(program) : '&nbsp' %>
+  </div>
+</div>
+{% endcall %}
+
+{% call macros.us_template('course-result-item-tpl') %}
+<div>
+  <img src="/static/img/FlowBlue_96px_SharpCorners.png"
+      class="search-course-icon">
+  <div class="primary-title suggestion-text">
+     <%- department_id %> <%- number %>
+  </div>
+  <div class="secondary-title suggestion-text">
+    <%- name %>
+  </div>
+</div>
+{% endcall %}
+
+{% call macros.us_template('prof-result-item-tpl') %}
+<div>
+  <img src="/static/img/kittens/color/<%- kittenNum %>.jpg"
+      class="search-course-icon">
+  <div class="primary-title suggestion-text">
+    <%- name %>
+  </div>
+  <div class="secondary-title suggestion-text">
+    <% if (departments_taught.length > 0) { %>
+    <%-  'Professor - Teaches ' + departments_taught.join(', ') %>
+    <% } else { %>
+         Professor
+    <% } %>
+  </div>
+</div>
+{% endcall %}
+
+{% call macros.us_template('empty-results-message-tpl') %}
+<div class="empty-message">
+  <p> No results found </p>
+</div>
+{% endcall %}

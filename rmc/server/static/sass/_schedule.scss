@@ -1,0 +1,301 @@
+@import 'variables';
+
+$toolbarBg: #FAFAFA;
+
+.class-schedule {
+  .schedule-frame {
+    border: 1px solid $wellBorderColor;
+    position: relative;
+    background: white;
+    @include border-radius(4px);
+  }
+
+  .schedule-nav {
+    @extend .clearfix;
+    vertical-align: bottom;
+
+    border-bottom: 1px solid $wellBorderColor;
+    padding: 8px 15px;
+    background: $toolbarBg;
+
+    $height: 22px;
+
+    .date-range {
+      display: inline-block;
+      font-weight: bold;
+      font-size: $height;
+      height: $height;
+      line-height: $height;
+      // TODO(mack): remove hack to get things to align vertically
+      margin-top: 3px;
+      
+      .weekly-hours-label {
+        display: inline-block;
+        margin-left: 5px;
+        font-size: 18px;
+        font-weight: 400;
+        color: #888;
+      }
+    }
+
+    .buttons {
+      display: inline-block;
+      float: right;
+      line-height: $height;
+
+      $lineHeight: 18px;
+      .curr-week-btn {
+        line-height: $lineHeight;
+      }
+
+      .prev-next-week-btns {
+        margin-left: 10px;
+        display: inline-block;
+        // Hack to get the arrows to vertically align with the
+        // "Current Week" button
+        i {
+          display: inline-block;
+          height: $lineHeight;
+        }
+      }
+    }
+  }
+
+  // TODO(david): Make this a JS option?
+  $hour-width: 80px;
+
+  .section-info {
+    color: #666;
+    white-space: initial;
+
+    .course-code {
+      font-weight: bold;
+      color: $textColor;
+    }
+  }
+
+  .times {
+    position: absolute;
+    width: 100%;
+  }
+
+  .times, .day {
+    height: 100%;
+    float: left;
+  }
+
+  .day {
+    border-left: 1px solid $wellBorderColor;
+    @include box-sizing(border-box);
+    position: relative;
+    padding-right: 2px;
+
+    &.today {
+      background-color: rgba(0, 0, 0, 0.015);
+    }
+  }
+
+  .day-container {
+    height: 100%;
+    margin-left: $hour-width;
+  }
+
+  .times .hour-row {
+    border-top: 1px solid $wellBorderColor;
+    position: relative;
+
+    .hour-label {
+      padding: 8px;
+      padding-top: 2px;
+      text-align: right;
+      width: $hour-width;
+      display: block;
+      @include box-sizing(border-box);
+    }
+
+    &:after {
+      content: ' ';
+      display: block;
+      position: absolute;
+      top: 50%;
+      margin-top: -1px;
+      left: $hour-width;
+      right: 0;
+      border-top: 1px dotted mix($wellBorderColor, white, 70%);
+    }
+  }
+
+  .header {
+    text-align: center;
+    font-weight: bold;
+    padding: 8px;
+  }
+
+  .schedule-item {
+    @include transition(all 100ms cubic-bezier(0.51, 0.01, 0.37, 0.98) 50ms);
+
+    border-width: 1px;
+    padding: 1px 3px;
+    position: absolute;
+    font-size: 14px;
+    line-height: 12px;
+    @include box-sizing(border-box);
+    border-color: darken($wellBorderColor, 10%);
+    border-left-width: 3px;  // TODO(david): Make this look less like Schedule+
+    margin-left: -1px;
+
+    @mixin item-class($color) {
+      // TODO(david): Make these args with defaults (once I get off the plane)
+      $topColor: #FCFCFC;
+      $colorWeight: 10%;
+
+      @include background(linear-gradient(top, $topColor, mix($color, $topColor, $colorWeight)));
+      border-color: mix($color, $wellBorderColor);
+    }
+
+    // TODO(david): Generate these using a for-loop (once I get off the plane)
+    &.blue   { @include item-class($blue);   }
+    &.green  { @include item-class($green);  }
+    &.red    { @include item-class($red);    }
+    &.yellow { @include item-class($yellow); }
+    &.orange { @include item-class($orange); }
+    &.purple { @include item-class($purple); }
+    &.gray   { @include item-class($gray);   }
+
+    .time-loc-info {
+      color: #666;
+      font-size: 13px;
+      line-height: 11px;
+    }
+  }
+
+  .schedule-item-container {
+    position: relative;
+    height: 100%;
+    border-top: 1px solid $wellBorderColor;
+  }
+
+  .courses-not-shown {
+    margin-top: 10px;
+  }
+}
+
+.schedule-input {
+  .steps-container {
+    counter-reset: steps;
+
+    .step {
+      text-align: center;
+      border-right: 1px solid #DDD;
+      // The margin-left of span3... yeah, I know, shouldn't be hardcoded
+      padding-right: 2.12766%;
+      padding-top: 20px;
+
+      &:last-child {
+        border-right: none;
+      }
+
+      // Fancy number counter
+      &:before {
+        display: block;
+
+        // Shape
+        $radius: 36px;
+        border-radius: $radius;
+        width: $radius * 2;
+        height: $radius * 2;
+
+        // Position
+        position: relative;
+        left: 50%;
+        margin-left: -$radius;
+        margin-bottom: 20px;
+
+        // Content
+        counter-increment: steps;
+        content: counter(steps);
+        line-height: $radius * 2;
+        font-size: $radius;
+        background-color: lighten($textColor, 15%);
+        color: #FFF;
+      }
+      .step-text {
+        min-height: 60px;
+        margin-bottom: 5px;
+      }
+
+      .step-img {
+        padding-bottom: 7px;
+      }
+    }
+  }
+
+  .schedule-input-textarea {
+    height: 250px;  // TODO(david): How do I get this to stretch vertically?
+    resize: none;
+    width: 89%;
+    box-sizing: border-box;
+    margin-top: 10px;
+  }
+
+  .schedule-input-error {
+    color: #ff0000;
+  }
+}
+
+.schedule-input-modal {
+  width: 80%;
+  left: 50%;
+  margin-left: -40%;
+
+  .modal-header {
+    border-bottom: 1px solid #DDD;
+  }
+
+  .modal-body {
+    padding: 0;
+    max-height: none;
+  }
+}
+
+.schedule-share {
+  // This is a workaround for the schedule-item-container stealing clicks
+  z-index: 100;
+  position: relative;
+
+  // Make the share bar look integrated with the schedule
+  background-color: $toolbarBg;
+  margin-top: 0;
+  padding: 8px 10px;
+  border-top: 1px solid $wellBorderColor;
+  @include border-radius(0 0 4px 4px);
+
+  .form-inline {
+    display: table;
+
+    > .cell {
+      display: table-cell;
+      white-space: nowrap;
+      padding-left: 10px;
+
+      &:first-child {
+        padding-left: 0;
+      }
+    }
+  }
+
+  .share-label {
+    vertical-align: middle;
+    margin: auto;
+  }
+
+  .link-box-container {
+    width: 100%;
+  }
+
+  .link-box {
+    width: 100%;
+    @include box-sizing(border-box);
+    height: 31px;
+  }
+}
