@@ -1,3 +1,11 @@
 debug_settings = {
     'key': 'debug-app-key',        
 }
+
+mongodb_settings = {
+    'port': 27017,
+    'host': 'localhost',
+    'user': 'rmc',
+    'password': 'passwork',
+    'db': 'rmc',
+}

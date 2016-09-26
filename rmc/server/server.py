@@ -1297,13 +1297,7 @@ def verify_webmaster():
     return response
 
 
-def before_app_run():
-    me.connect(c.MONGO_DB_RMC, host=c.MONGO_HOST, port=c.MONGO_PORT)
-
-
 if __name__ == '__main__':
-    before_app_run()
-
     # Late import since this isn't used on production
     import flask_debugtoolbar
 

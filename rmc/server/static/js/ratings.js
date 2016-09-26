@@ -127,6 +127,7 @@ function(RmcBackbone, $, _, _s, util, _bootstrap) {
     className: 'rating-choice',
 
     initialize: function(options) {
+      this.model = options.model;
       this.model.on('change:rating', _.bind(this.setStateFromRating, this));
       this.template = _.template($('#binary-rating-tpl').html());
       if (options.voting) {
