@@ -17,6 +17,7 @@
 {% endblock %}
 
 {% block sidebar %}
+  <div id="user-point-placeholder"></div>
   <hr class="divider">
   <div class="row-fluid">
     <div class="span12" id="friend-sidebar-container"></div>
@@ -61,7 +62,6 @@
       </a>
     </div>
   {% endif %}
-
   <div id="schedule-input-modal-placeholder"></div>
   <div id="class-schedule-placeholder"></div>
   <div id="exam-schedule-placeholder"></div>
@@ -80,6 +80,7 @@
   {% include 'exam.html' %}
   {% include 'schedule.html' %}
   {% include 'sign_in.html' %}
+  {% include 'points.html' %}
 {% endblock %}
 
 {% block scripts %}

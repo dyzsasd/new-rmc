@@ -225,9 +225,14 @@
           {% if current_user %}
             <li class="dropdown">
               <a class="nav-item dropdown-toggle" data-toggle="dropdown">
-                <i class="icon-caret-down"></i>
+                <b>My Account</b>
               </a>
               <ul class="dropdown-menu">
+                <li>
+                  <a href="/profile">
+                    <i class="icon-signin"></i> My Profile
+                  </a>
+                </li>
                 <li>
                   <a class="signout-btn">
                     <i class="icon-signout"></i> Sign out

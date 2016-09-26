@@ -5,7 +5,7 @@ import subprocess
 import mongoengine as me
 
 import rmc.html_snapshots.utils as utils
-import rmc.common.constants as c
+import rmc.shared.constants as c
 
 
 def crawl_page(url):

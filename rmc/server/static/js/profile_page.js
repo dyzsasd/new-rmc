@@ -2,10 +2,10 @@ require(
 ['ext/jquery', 'ext/underscore', 'ext/underscore.string', 'ext/bootstrap',
 'term', 'course', 'friend', 'util', 'user', 'user_course', 'prof', 'exam',
 'raffle_unlock', 'schedule', 'sign_in', 'work_queue', 'scholarship',
-'ext/react'],
+'ext/react', 'points'],
 function($, _, _s, _bootstrap, term, _course, friend, _util, user, _user_course,
   _prof, _exam, _raffle_unlock, _schedule, _sign_in, _work_queue,
-  _scholarship, React) {
+  _scholarship, React, _points) {
 
   _course.CourseCollection.addToCache(pageData.courseObjs);
   _user_course.UserCourses.addToCache(pageData.userCourseObjs);
@@ -106,6 +106,12 @@ function($, _, _s, _bootstrap, term, _course, friend, _util, user, _user_course,
     $('#profile-terms-placeholder').replaceWith(profileTermsView.render().el);
   };
 
+  var currentUser = user.getCurrentUser();
+  if (currentUser) {
+    var userPointsView = new _points.PointsView({ model: currentUser });
+    $('#user-point-placeholder').replaceWith(
+        userPointsView.render().el);
+  }
   // Render the transcript, if available
   var transcriptObj = window.pageData.transcriptObj;
   if (transcriptObj && transcriptObj.length !== 0) {

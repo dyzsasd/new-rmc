@@ -12,13 +12,13 @@ function($, _, __, _util) {
     fbAppId = '119055615212269';
   }
 
-  var _initializedFacebook = false;
+  var _initializedFacebook = true;
   var initializedFacebook = function() {
     return _initializedFacebook;
   };
 
   var initFacebook = function(force) {
-    if (force || !_initializedFacebook) {
+    if (false) {
       FB.init({appId: fbAppId, status: true, cookie: true, xfbml: true});
       _initializedFacebook = true;
     }
