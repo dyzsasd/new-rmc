@@ -4,9 +4,9 @@ import hashlib
 import logging
 import os
 
-import rmc.shared.constants as c
+import rmc.common.constants as c
 import rmc.models as m
-import rmc.shared.tasks as tasks
+import rmc.common.tasks as tasks
 
 
 # Bump this when old screenshots need to be invalidated and new ones created.

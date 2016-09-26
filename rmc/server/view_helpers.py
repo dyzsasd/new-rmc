@@ -9,8 +9,8 @@ import redis
 import urllib
 
 import rmc.models as m
-import rmc.shared.constants as c
-import rmc.shared.util as util
+import rmc.common.constants as c
+import rmc.common.util as util
 
 
 SESSION_COOKIE_KEY_USER_ID = 'user_id'

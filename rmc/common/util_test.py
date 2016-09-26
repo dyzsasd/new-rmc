@@ -4,7 +4,7 @@ import unittest
 import bson
 import freezegun
 
-import rmc.shared.util as util
+import rmc.common.util as util
 
 
 class UtilTest(unittest.TestCase):

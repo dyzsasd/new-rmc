@@ -1,5 +1,5 @@
 import os
-from rmc.shared.local_setting import local_setting
+from rmc.common.local_setting import local_setting
 
 
 IS_PROD = os.path.isdir('/home/rmc')

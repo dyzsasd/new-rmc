@@ -2,7 +2,7 @@ import os
 
 import mongoengine as me
 
-import rmc.shared.constants as c
+import rmc.common.constants as c
 import rmc.models as m
 
 FILE_DIR = os.path.dirname(os.path.realpath(__file__))

@@ -8,9 +8,9 @@ import pytz
 
 import rmc.models as m
 import rmc.server.view_helpers as view_helpers
-import rmc.shared.rmclogger as rmclogger
-import rmc.shared.util as util
-import rmc.shared.schedule_screenshot as schedule_screenshot
+import rmc.common.rmclogger as rmclogger
+import rmc.common.util as util
+import rmc.common.schedule_screenshot as schedule_screenshot
 
 
 # Local constants

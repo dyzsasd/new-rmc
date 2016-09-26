@@ -10,9 +10,9 @@ import mongoengine as me
 import rmc.models as m
 import rmc.server.api.api_util as api_util
 import rmc.server.view_helpers as view_helpers
-import rmc.shared.schedule_screenshot as schedule_screenshot
-import rmc.shared.facebook as facebook
-import rmc.shared.rmclogger as rmclogger
+import rmc.common.schedule_screenshot as schedule_screenshot
+import rmc.common.facebook as facebook
+import rmc.common.rmclogger as rmclogger
 
 
 # TODO(david): Bring in other API methods from server.py to here.

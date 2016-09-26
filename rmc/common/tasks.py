@@ -3,7 +3,7 @@ import logging
 import os
 import subprocess
 
-import rmc.shared.constants as c
+import rmc.common.constants as c
 
 app = celery.Celery('tasks', broker='redis://%(hostname)s:%(port)d/%(db)d' % {
     'hostname': c.REDIS_HOST,

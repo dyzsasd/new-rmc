@@ -9,7 +9,7 @@ import urlparse
 
 from rmc.server.app import app
 import rmc.server.api.api_util as api_util
-import rmc.shared.util as util
+import rmc.common.util as util
 
 # A long token normally lasts for 60 days
 FB_FORCE_TOKEN_EXPIRATION_DAYS = 57

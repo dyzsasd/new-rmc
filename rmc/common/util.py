@@ -9,7 +9,7 @@ import pytz
 
 from bson import json_util, ObjectId
 
-import rmc.shared.constants as c
+import rmc.common.constants as c
 
 
 NUM_DAYS_FRESH_DATA = 4 * 365

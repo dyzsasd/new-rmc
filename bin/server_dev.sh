@@ -10,13 +10,15 @@ case "$COMMAND" in
     "local")
         echo "Starting local flask server"
         FLASK_CONFIG=$ROOT/config/flask_dev.py \
-          PYTHONPATH="$ROOT/../" \
+          PYTHONPATH="$ROOT" \
+		  RMC_LOG_DIR="$ROOT/logs" \
           python rmc/server/server.py
         ;;
 
     "remote")
         echo "Starting remote flask server"
         PYTHONPATH="$ROOT/../" uwsgi \
+		  RMC_LOG_DIR="$ROOT/logs" \
           --http 0.0.0.0:5000 \
           --chmod-socket=666 \
           --env FLASK_CONFIG=$ROOT/config/flask_dev.py \

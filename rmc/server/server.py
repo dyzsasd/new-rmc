@@ -10,19 +10,19 @@ import re
 import time
 import werkzeug.exceptions as exceptions
 
-import rmc.shared.constants as c
-import rmc.shared.secrets as s
+import rmc.common.constants as c
+import rmc.common.secrets as s
 import rmc.models as m
 import rmc.html_snapshots as html_snapshots
-import rmc.shared.facebook as facebook
-import rmc.shared.util as util
-import rmc.shared.rmclogger as rmclogger
+import rmc.common.facebook as facebook
+import rmc.common.util as util
+import rmc.common.rmclogger as rmclogger
 from rmc.server.app import app
 import rmc.server.api.v1 as api_v1
 import rmc.server.profile as profile
 import rmc.server.view_helpers as view_helpers
 import rmc.analytics.stats as rmc_stats
-import rmc.shared.schedule_screenshot as schedule_screenshot
+import rmc.common.schedule_screenshot as schedule_screenshot
 import rmc.kittens.data as kitten_data
 
 
@@ -1299,64 +1299,13 @@ def verify_webmaster():
 
 def before_app_run():
     me.connect(c.MONGO_DB_RMC, host=c.MONGO_HOST, port=c.MONGO_PORT)
-    app.config.from_envvar('FLASK_CONFIG')
 
-    if not app.debug:
-        from logging.handlers import TimedRotatingFileHandler
-        logging.basicConfig(level=logging.INFO)
-
-        formatter = logging.Formatter('%(asctime)s - %(levelname)s in'
-                ' %(module)s:%(lineno)d %(message)s')
-
-        file_handler = TimedRotatingFileHandler(
-                            filename=app.config['LOG_PATH'],
-                            when='D')
-        file_handler.setLevel(logging.INFO)
-        file_handler.setFormatter(formatter)
-        app.logger.addHandler(file_handler)
-        logging.getLogger('').addHandler(file_handler)  # Root handler
-
-        from log_handler import HipChatHandler
-        hipchat_handler = HipChatHandler(s.HIPCHAT_TOKEN,
-                s.HIPCHAT_HACK_ROOM_ID, notify=True, color='red',
-                sender='Flask')
-        hipchat_handler.setLevel(logging.ERROR)
-        hipchat_handler.setFormatter(formatter)
-        logging.getLogger('').addHandler(hipchat_handler)
-    else:
-        logging.basicConfig(level=logging.DEBUG)
-
-    # Create the directory for storing schedules if it does not exist
-    schedule_dir = get_schedule_dir()
-    if not os.path.exists(schedule_dir):
-        os.makedirs(schedule_dir)
-
-    # create the directory for storing transcripts if it does not exist
-    transcript_dir = get_transcript_dir()
-    if not os.path.exists(transcript_dir):
-        os.makedirs(transcript_dir)
 
 if __name__ == '__main__':
     before_app_run()
 
     # Late import since this isn't used on production
     import flask_debugtoolbar
-
-    app.debug = True
-    app.config.update({
-        'DEBUG_TB_INTERCEPT_REDIRECTS': False,
-        'DEBUG_TB_PROFILER_ENABLED': True,
-        'DEBUG_TB_PANELS': [
-            'flask_debugtoolbar.panels.versions.VersionDebugPanel',
-            'flask_debugtoolbar.panels.timer.TimerDebugPanel',
-            'flask_debugtoolbar.panels.headers.HeaderDebugPanel',
-            'flask_debugtoolbar.panels.request_vars.RequestVarsDebugPanel',
-            'flask_debugtoolbar.panels.template.TemplateDebugPanel',
-            'flask_debugtoolbar.panels.logger.LoggingPanel',
-            'flask_debugtoolbar.panels.profiler.ProfilerDebugPanel',
-            'flask_debugtoolbar_lineprofilerpanel.panels.LineProfilerPanel'
-        ]
-    })
 
     toolbar = flask_debugtoolbar.DebugToolbarExtension(app)
     app.run(host='0.0.0.0')
