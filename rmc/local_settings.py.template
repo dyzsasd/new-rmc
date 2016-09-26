@@ -1,0 +1,3 @@
+debug_settings = {
+    'key': 'debug-app-key',        
+}
