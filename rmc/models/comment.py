@@ -15,7 +15,7 @@ MIN_COMMENT_LENGTH = 11
 class BaseComment(me.Document):
     text = me.StringField(default='', max_length=4096)
     created_at = me.DateTimeField(default=datetime.utcnow)
-    last_updated_at = me.DateTimeField()
+    last_updated_at = me.DateTimeField(default=datetime.utcnow)
     shared_at = me.DateTimeField()
     rating_updated_at = me.DateTimeField()
     privacy = me.IntField(
@@ -26,6 +26,13 @@ class BaseComment(me.Document):
     meta = {
         'abstract': True,
     }
+
+    def is_empty(self):
+        if not self.text:
+            return True
+
+    def non_empty(self):
+        return self.is_empty()
 
 
 class CourseComment(BaseComment):
@@ -57,6 +64,7 @@ class CourseComment(BaseComment):
             ]
         }).order_by('created_at')
         return comments[start: start + rows]
+
 
 class CourseProfessorComment(BaseComment):
     user_id = me.ObjectIdField(required=True)

@@ -5,13 +5,13 @@ import redis
 
 import rating as _rating
 import review as _review
-import rmc.common.constants as c
 from rmc.common import util
+from rmc.settings import redis_settings
 import user_course
 import itertools
 
 # TODO(mack): remove this from here?
-r = redis.StrictRedis(host=c.REDIS_HOST, port=c.REDIS_PORT, db=c.REDIS_DB)
+r = redis.StrictRedis(host=redis_settings['host'], port=redis_settings['port'], db=redis_settings['db'])
 
 _COURSE_NAME_REGEX = re.compile(r'([a-z]+)([0-9]+)')
 

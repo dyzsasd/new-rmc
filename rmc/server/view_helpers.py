@@ -9,17 +9,19 @@ import redis
 import urllib
 
 import rmc.models as m
-import rmc.common.constants as c
 import rmc.common.util as util
+from rmc.settings import redis_settings
 
 
 SESSION_COOKIE_KEY_USER_ID = 'user_id'
 SESSION_COOKIE_KEY_CSRF = '_csrf_token'
 
 
-_redis_instance = redis.StrictRedis(host=c.REDIS_HOST,
-                                    port=c.REDIS_PORT,
-                                    db=c.REDIS_DB)
+_redis_instance = redis.StrictRedis(
+    host=redis_settings['host'],
+    port=redis_settings['port'],
+    db=redis_settings['db']
+)
 
 
 def get_redis_instance():

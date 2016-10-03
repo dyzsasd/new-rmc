@@ -23,7 +23,6 @@ from course_alert import GcmCourseAlert  # @UnusedImport
 from scholarship import Scholarship  # @UnusedImport
 from review import SimpleReview
 from comment import CourseComment
-from comment import ProfessorInCourseComment
 
 
 mongoengine.connect(

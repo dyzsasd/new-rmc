@@ -8,8 +8,8 @@ import requests
 from PIL import Image
 
 import rmc.kittens.data as kitten_data
-import rmc.common.constants as c
 import rmc.common.secrets as s
+from rmc import settings
 
 
 def get_photo_info_from_flickr(photo_id):
@@ -27,7 +27,7 @@ COLOR_HEIGHT = 150
 GREY_WIDTH = 50
 GREY_HEIGHT = 50
 
-BASE_OUTDIR = os.path.join(c.RMC_ROOT, 'server', 'static', 'img', 'kittens')
+BASE_OUTDIR = os.path.join(settings.RMC_ROOT, 'server', 'static', 'img', 'kittens')
 
 
 def download_photo(photo_info, index):

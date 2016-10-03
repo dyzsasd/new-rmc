@@ -5,7 +5,7 @@ import subprocess
 import mongoengine as me
 
 import rmc.html_snapshots.utils as utils
-import rmc.common.constants as c
+from rmc.settings import mongodb_settings
 
 
 def crawl_page(url):
@@ -55,5 +55,5 @@ if __name__ == "__main__":
     parser.add_argument('base_url', type=str)
     parser.add_argument('--overwrite', dest='overwrite', action='store_true')
     args = parser.parse_args()
-    me.connect(c.MONGO_DB_RMC, host=c.MONGO_HOST, port=c.MONGO_PORT)
+    me.connect(mongodb_settings['db'], host=mongodb_settings['host'], port=mongodb_settings['port'])
     generate_snapshots(args.base_url, args.overwrite)

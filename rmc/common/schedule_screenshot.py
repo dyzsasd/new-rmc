@@ -4,7 +4,7 @@ import hashlib
 import logging
 import os
 
-import rmc.common.constants as c
+import rmc.settings as settings
 import rmc.models as m
 import rmc.common.tasks as tasks
 
@@ -39,9 +39,9 @@ def _get_screenshot_filepath(user, latest_user_schedule_item):
     if urlpath is None:
         return None
 
-    filepath = os.path.abspath(os.path.join(c.RMC_ROOT, "server", urlpath))
+    filepath = os.path.abspath(os.path.join(settings.RMC_ROOT, "server", urlpath))
     schedule_symlink_dir = os.path.dirname(filepath)
-    schedule_storage_dir = os.path.join(c.SHARED_DATA_DIR, "schedules")
+    schedule_storage_dir = os.path.join(settings.SHARED_DATA_DIR, "schedules")
 
     if not os.path.exists(schedule_storage_dir):
         os.makedirs(schedule_storage_dir, 0755)
@@ -122,9 +122,10 @@ def update_screenshot_async(user):
     # JS timestamps are in milliseconds, not seconds
     start_date_timestamp_js = 1000 * start_date_timestamp
     url_to_render = ("%s/schedule/%s?start_date=%d" % (
-                        c.RMC_HOST,
-                        user.get_secret_id(),
-                        start_date_timestamp_js))
+        settings.RMC_HOST,
+        user.get_secret_id(),
+        start_date_timestamp_js)
+    )
 
     tasks.render_schedule_screenshot.delay(url_to_render, screenshot_filepath)
 
@@ -148,5 +149,5 @@ def get_screenshot_url(user, latest_user_schedule_item=None):
     if not os.path.exists(screenshot_filepath):
         return None
 
-    return c.RMC_HOST + "/" + _get_screenshot_path(user,
+    return settings.RMC_HOST + "/" + _get_screenshot_path(user,
         latest_user_schedule_item)

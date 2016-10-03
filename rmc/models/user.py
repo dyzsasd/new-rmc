@@ -15,7 +15,7 @@ import points as _points
 import term as _term
 import user_course as _user_course
 import user_schedule_item as _user_schedule_item
-from rmc.common import constants
+from rmc import settings
 from rmc.common import facebook
 from rmc.common import rmclogger
 from rmc.common import util
@@ -251,7 +251,7 @@ class User(me.Document):
 
     @property
     def absolute_profile_url(self):
-        return '%s%s?admin=1' % (constants.RMC_HOST, self.profile_url)
+        return '%s%s?admin=1' % (settings.RMC_HOST, self.profile_url)
 
     @property
     def short_program_name(self):
@@ -301,7 +301,7 @@ class User(me.Document):
 
     @property
     def is_demo_account(self):
-        return self.fbid == constants.DEMO_ACCOUNT_FBID
+        return self.fbid == settings.DEMO_ACCOUNT_FBID
 
     @property
     def last_schedule_paste(self):

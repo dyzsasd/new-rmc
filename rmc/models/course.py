@@ -69,8 +69,6 @@ class Course(me.Document):
             'easiness.count',
             'usefulness.rating',
             'usefulness.count',
-            'overall.rating',
-            'overall.count',
         ],
     }
 

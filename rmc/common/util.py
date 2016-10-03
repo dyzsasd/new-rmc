@@ -9,7 +9,7 @@ import pytz
 
 from bson import json_util, ObjectId
 
-import rmc.common.constants as c
+from rmc import settings
 
 
 NUM_DAYS_FRESH_DATA = 4 * 365
@@ -84,7 +84,7 @@ def pnormaldist(qn):
     return -math.sqrt(w1 * w3)
 
 
-def get_sorting_score(phat, n, confidence=c.RATINGS_CONFIDENCE):
+def get_sorting_score(phat, n, confidence=settings.RATINGS_CONFIDENCE):
     """
     Get the score used for sorting by ratings
 
@@ -100,7 +100,7 @@ def get_sorting_score(phat, n, confidence=c.RATINGS_CONFIDENCE):
         return 0
 
     try:
-        if confidence == c.RATINGS_CONFIDENCE:
+        if confidence == settings.RATINGS_CONFIDENCE:
             z = 1.9599639715843482
         else:
             z = pnormaldist(1 - (1 - confidence) / 2)

@@ -29,7 +29,7 @@ function($, _, _s, __, _util, _schedule_parser) {
 
     $logger.append(
       '<div class="text-info">Fetching all users who have schedules</div>');
-    $.ajax('/api/users/schedule_paste', {
+    $.ajax('/api/user/schedule_paste', {
       type: 'GET',
       data: {
         include_good_paste: true,
@@ -58,7 +58,7 @@ function($, _, _s, __, _util, _schedule_parser) {
     $logger.append(
       '<div class="text-info">Fetching users whose schedule failed ' +
       'to parse</div>');
-    $.ajax('/api/users/schedule_paste', {
+    $.ajax('/api/user/schedule_paste', {
       type: 'GET',
       data: {
         include_bad_paste: true

@@ -3,12 +3,12 @@ import logging
 import os
 import subprocess
 
-import rmc.common.constants as c
+from rmc.settings import redis_settings
 
 app = celery.Celery('tasks', broker='redis://%(hostname)s:%(port)d/%(db)d' % {
-    'hostname': c.REDIS_HOST,
-    'port': c.REDIS_PORT,
-    'db': c.REDIS_DB
+    'hostname': redis_settings['host'],
+    'port': redis_settings['port'],
+    'db': redis_settings['db'],
 })
 
 app.conf.update(

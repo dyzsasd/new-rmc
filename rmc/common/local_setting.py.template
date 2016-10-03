@@ -1,7 +1,0 @@
-local_setting = {
-    'mongo': {
-    },
-    'redis': {
-        'port': 6479,
-    },
-}
