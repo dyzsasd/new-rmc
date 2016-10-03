@@ -48,9 +48,6 @@ def get_current_user():
     """
     req = flask.request
 
-    if hasattr(req, 'current_user'):
-        return req.current_user
-
     api_key = req.values.get('api_key')
     if api_key and is_api_request():
         req.current_user = m.User.objects(api_key=api_key).first()

@@ -61,7 +61,6 @@ function(RmcBackbone, $, _, _s, util, _bootstrap) {
   var RatingsView = RmcBackbone.View.extend({
     initialize: function(options) {
       this.ratings = options.ratings;
-      this.userCourse = options.userCourse;
       this.subject = options.subject;
       this.template = _.template($('#ratings-tpl').html());
     },

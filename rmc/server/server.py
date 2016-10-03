@@ -141,6 +141,7 @@ def call_after_request_callbacks(response):
 
     return response
 
+# view handles
 
 @app.route('/')
 def index():
@@ -175,6 +176,9 @@ def crash():
     """For testing error logging"""
     logging.warn("Crashing because you want me to (hit /crash)")
     raise Exception("OH NOES we've crashed!!!!!!!!!! /crash was hit")
+
+
+
 
 
 @app.route('/profile/demo')
@@ -221,102 +225,6 @@ def schedule_page(profile_user_secret_id):
 
     return profile.render_schedule_page(profile_user)
 
-
-@app.route('/course')
-def course():
-    return flask.redirect('/courses', 301)  # Moved permanently
-
-
-@app.route('/courses')
-def courses():
-    # TODO(mack): move into COURSES_SORT_MODES
-    def clean_sort_modes(sort_mode):
-        return {
-            'name': sort_mode['name'],
-            'direction': sort_mode['direction'],
-        }
-
-    sort_modes = map(clean_sort_modes, m.Course.SORT_MODES)
-
-    current_user = view_helpers.get_current_user()
-
-    # Don't show friends_taken sort mode when user has no friends
-    if current_user and len(current_user.friend_ids) == 0:
-        sort_modes = [sm for sm in sort_modes if sm['name'] != 'friends_taken']
-
-    return flask.render_template(
-        'search_page.html',
-        page_script='search_page.js',
-        sort_modes=sort_modes,
-        current_user_id=current_user.id if current_user else None,
-        user_objs=[current_user.to_dict(
-            include_course_ids=True)] if current_user else [],
-    )
-
-
-@app.route('/courses/<string:course_id>')
-def courses_page(course_id):
-    return flask.redirect('/course/%s' % course_id, 301)  # Moved permanently
-
-
-@app.route('/course/<string:course_id>')
-def course_page(course_id):
-    course = m.Course.objects.with_id(course_id)
-    if not course:
-        # TODO(david): 404 page
-        flask.abort(404)
-
-    current_user = view_helpers.get_current_user()
-
-    course_dict_list, user_course_dict_list, user_course_list = (
-            m.Course.get_course_and_user_course_dicts(
-                [course], current_user, include_all_users=True,
-                include_friends=True, full_user_courses=True,
-                include_sections=True))
-
-    professor_dict_list = m.Professor.get_full_professors_for_course(
-            course, current_user)
-
-    user_dicts = {}
-    if current_user:
-        # TODO(Sandy): This is poorly named because its not only friends...
-        friend_ids = ({uc_dict['user_id'] for uc_dict in user_course_dict_list}
-                - set([current_user.id]))
-        friends = m.User.objects(id__in=friend_ids).only(*m.User.CORE_FIELDS)
-
-        for friend in friends:
-            user_dicts[friend.id] = friend.to_dict()
-        user_dicts[current_user.id] = current_user.to_dict(
-                include_course_ids=True)
-
-    tip_dict_list = course.get_reviews(current_user, user_course_list)
-
-    rmclogger.log_event(
-        rmclogger.LOG_CATEGORY_IMPRESSION,
-        rmclogger.LOG_EVENT_SINGLE_COURSE, {
-            'current_user': current_user.id if current_user else None,
-            'course_id': course_id,
-        },
-    )
-
-    exam_objs = m.Exam.objects(course_id=course_id)
-    exam_dict_list = [e.to_dict() for e in exam_objs]
-
-    exam_updated_date = None
-    if exam_objs:
-        exam_updated_date = exam_objs[0].id.generation_time
-
-    return flask.render_template('course_page.html',
-        page_script='course_page.js',
-        course_obj=course_dict_list[0],
-        professor_objs=professor_dict_list,
-        tip_objs=tip_dict_list,
-        user_course_objs=user_course_dict_list,
-        user_objs=user_dicts.values(),
-        exam_objs=exam_dict_list,
-        exam_updated_date=exam_updated_date,
-        current_user_id=current_user.id if current_user else None,
-    )
 
 
 @app.route('/professor/<string:prof_id>')
@@ -621,59 +529,6 @@ def unsubscribe_user():
         return flask.redirect('/')
 
     return flask.redirect('/')
-
-
-# TODO(david): Doesn't seem like this is used anymore... remove.
-@app.route('/api/courses/<string:course_ids>', methods=['GET'])
-# TODO(mack): find a better name for function
-def get_courses(course_ids):
-    course_ids = [c.lower() for c in course_ids.split(',')]
-    courses = m.Course.objects(
-      id__in=course_ids,
-    )
-
-    # TODO(mack): not currently being called, fix it when it is needed
-    # course_objs = map(clean_course, courses)
-    course_objs = []
-    professor_objs = m.Professor.get_reduced_professor_for_courses(courses)
-
-    return util.json_dumps({
-        'course_objs': course_objs,
-        'professor_objs': professor_objs,
-    })
-
-
-@app.route('/api/course-search', methods=['GET'])
-# TODO(mack): find a better name for function
-# TODO(mack): a potential problem with a bunch of the sort modes is if the
-# value they are sorting by changes in the objects. this can lead to missing
-# or duplicate contests being passed to front end
-def search_courses():
-    current_user = view_helpers.get_current_user()
-    courses, has_more = m.Course.search(flask.request.values, current_user)
-
-    course_dict_list, user_course_dict_list, user_course_list = (
-            m.Course.get_course_and_user_course_dicts(
-                courses, current_user, include_friends=True,
-                full_user_courses=False, include_sections=True))
-
-    professor_dict_list = m.Professor.get_reduced_professors_for_courses(
-            courses)
-
-    user_dict_list = []
-    if current_user:
-        user_ids = [uc['user_id'] for uc in user_course_dict_list
-                if uc['user_id'] != current_user.id]
-        users = m.User.objects(id__in=user_ids).only(*m.User.CORE_FIELDS)
-        user_dict_list = [u.to_dict() for u in users]
-
-    return util.json_dumps({
-        'user_objs': user_dict_list,
-        'course_objs': course_dict_list,
-        'professor_objs': professor_dict_list,
-        'user_course_objs': user_course_dict_list,
-        'has_more': has_more,
-    })
 
 
 @app.route('/api/renew-fb', methods=['POST'])

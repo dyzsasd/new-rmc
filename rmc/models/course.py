@@ -95,10 +95,6 @@ class Course(me.Document):
                                         default=rating.AggregateRating())
     usefulness = me.EmbeddedDocumentField(rating.AggregateRating,
                                           default=rating.AggregateRating())
-    # TODO(mack): deprecate overall rating
-    overall = me.EmbeddedDocumentField(rating.AggregateRating,
-                                       default=rating.AggregateRating())
-
     professor_ids = me.ListField(me.StringField())
 
     antireqs = me.StringField()
@@ -127,6 +123,21 @@ class Course(me.Document):
         department = matches[0]
         number = matches[1]
         return '%s %s' % (department.upper(), number.upper())
+
+    @property
+    def overall(self):
+        overall_count = (
+            self.easiness.count
+            + self.interest.count
+            + self.usefulness.count
+        )
+        overall_rating = (
+            self.easiness.rating * self.easiness.count
+            + self.interest.rating * self.interest.count
+            + self.usefulness.rating * self.usefulness.count
+        ) / max(1, overall_count)
+
+        return {"rating": overall_rating, "count": overall_count}
 
     def save(self, *args, **kwargs):
         if not self.id:
@@ -392,9 +403,9 @@ class Course(me.Document):
             'code': self.code,
             'name': self.name,
             'description': self.description,
-            # TODO(mack): create user models for friends
-            #'friends': [1647810326, 518430508, 541400376],
-            'ratings': util.dict_to_list(self.get_ratings()),
+            'easiness': self.easiness.to_dict(),
+            'interest': self.interest.to_dict(),
+            'usefulness': self.usefulness.to_dict(),
             'overall': self.overall.to_dict(),
             'professor_ids': self.professor_ids,
             'prereqs': self.prereqs,

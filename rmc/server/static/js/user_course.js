@@ -286,49 +286,44 @@ function(RmcBackbone, $, _jqueryui, _, _s, ratings, _select2, _autosize,
   });
   UserCourses.registerCache('user_course');
 
-  var UserCourseView = RmcBackbone.View.extend({
-    initialize: function(options) {
-      this.userCourse = options.userCourse;
-      this.courseModel = options.courseModel;
+  var CourseCommentView = RmcBackbone.View.extend({
+    initialize: function (options) {
+      this.course = options.course;
+      this.professors = options.professors;
+      this.context = options.context;
 
-      var courseReview = this.userCourse.get('course_review');
-      var profReview = this.userCourse.get('professor_review');
+      this.courseComment = options.courseComment;
+      this.profComment = options.profComment;
 
       this.courseCommentView = new UserCommentView({
-        review: courseReview,
-        userCourse: this.userCourse,
-        className: 'user-comment course-comment',
+        comment: this.courseComment,
+        classname: 'user-comment course-comment',
         placeholder: 'Post any tips or comments and earn 50 points!',
         reviewType: 'COURSE'
       });
       this.profCommentView = new UserCommentView({
-        review: profReview,
-        userCourse: this.userCourse,
+        review: this.profComment,
         className: 'user-comment prof-comment',
-        // TODO(mack): get number of points from backend
         placeholder: 'Comment about the professor and earn 50 points!',
         reviewType: 'PROFESSOR'
       });
 
-      // Auto scroll
       this.userCourse.on('mostlyFilledIn', _.bind(this.tryAutoScroll, this));
-      // Don't auto scroll if the user is just editing their data
+
       this.canAutoScroll = !this.userCourse.isMostlyFilledIn();
 
-      courseReview.on('change:comment',
+      this.courseComment.on('change:text',
           _.bind(this.saveComments, this, this.courseCommentView));
-      profReview.on('change:comment',
+      this.profComment.on('change:text',
           _.bind(this.saveComments, this, this.profCommentView));
 
-      // Don't show comment posted UI changes after privacy change
-      // TODO(david): Should some of this stuff be in models?
-      courseReview.on('change:privacy', _.bind(this.save, this,
-            /* attrs */ null, /* options */ null));
-      profReview.on('change:privacy', _.bind(this.save, this,
-            /* attrs */ null, /* options */ null));
+      this.courseComment.on('change:privacy', _.bind(this.save, this,
+          /* attrs */ null, /* options */ null));
+      this.profComment.on('change:privacy', _.bind(this.save, this,
+          /* attrs */ null, /* options */ null));
 
-      var courseRatings = this.userCourse.get('course_review').get('ratings');
-      var profRatings = this.userCourse.get('professor_review').get('ratings');
+      var courseRatings = this.courseComment.getRatings();
+      var profRatings = this.profComment.getRatings();
 
       this.courseRatingsView = new ratings.RatingChoiceCollectionView({
         collection: courseRatings
@@ -337,14 +332,127 @@ function(RmcBackbone, $, _jqueryui, _, _s, ratings, _select2, _autosize,
         collection: profRatings
       });
 
-      this.profNames = this.courseModel.get('professors').pluck('name');
-      this.profIds = this.courseModel.get('professors').pluck('id');
-      // TODO(david): Find a way to get select2 to not create search choice
-      //     until a non-match for us (instead of manually doing this).
+      this.profNames = this.professors.map(function (prof) { return prof.get('name') });
+      this.profIds = this.professors.map(function (prof) { return prof.get('id') });
+
       this.matchesProf = _.bind(function(term) {
         return _.find(this.profNames, _.bind(
-              $.fn.select2.defaults.matcher, null, term));
+            $.fn.select2.defaults.matcher, null, term));
       }, this);
+    },
+
+    render: function () {
+      var self = this;
+      var commentContext = {
+        course: this.course.toJSON(),
+        user_name: this.context.user.get('name')
+      };
+      this.$el.html(_.template($('#add-review-tpl').html), commentContext);
+
+      var $profSelect = this.$('.prof-select');
+      $profSelect.select2({
+        createSearchChoice: function (term) {
+          if (self.matchesProf(term)) {
+            return null;
+          }
+          return {
+            id: term,
+            text: term
+          };
+        },
+        initSelection: function (element, callback) {
+
+        },
+        formatNoMatches: function () {
+          return 'Type to add new prof'
+        },
+        allowClear: true,
+        data: this.professors.chain().sortBy(function (prof) {
+          return prof.get('name');
+        }).map(function (prof) {
+          return {id: prof.get('id'), text: prof.get('name')};
+        }).value()
+      });
+
+      if (this.profComment.has('professor_id')) {
+        var profId = this.profComment.get('professor_id');
+        var prof = this.professors.get(profId);
+        if (prof) {
+          this.$('.prof-select').select2('data', { id: profId, text: prof.get('name') });
+        }
+        this.$('.prof-review').show()
+      }
+      this.$('.course-ratings-placeholder').replaceWith(
+          this.courseRatingsView.render().el);
+      this.$('.prof-ratings-placeholder').replaceWith(
+          this.profRatingsView.render().el);
+
+      this.$('.dropdown-toggle').dropdown();
+
+      return this;
+    },
+
+    events: {
+      'change .prof-select': 'onProfSelect'
+    },
+
+    logToGA: function(event, label) {
+      // TODO(Sandy): Include more info like course_id
+      // NOTE: The 4th param "value" can ONLY be an integer
+      _gaq.push([
+        '_trackEvent',
+        'USER_ENGAGEMENT',
+        event,
+        label
+      ]);
+    },
+
+    onProfSelect: function() {
+      var profData = this.$('.prof-select').select2('data');
+      if (profData) {
+        this.$('.prof-review').slideDown(300, 'easeOutCubic');
+      } else {
+        this.$('.prof-review').slideUp(300, 'easeOutCubic');
+      }
+      this.logToGA('PROFESSOR', 'SELECT');
+      this.save();
+
+      mixpanel.track('Reviewing: Professor selected', {
+        course_id: this.userCourse.get('course_id')
+      });
+      mixpanel.people.increment({'Professor selected': 1});
+    },
+
+    tryAutoScroll: function(isRatingChange) {
+      if (isRatingChange &&
+          !this.userCourse.get('professor_review').get('ratings').allRated()) {
+        return;
+      }
+
+      if (this.canAutoScroll) {
+        this.$el.trigger('autoScroll', this.courseModel);
+        // Only auto scroll once
+        this.canAutoScroll = false;
+      }
+    },
+
+    isMostlyFilledIn: function() {
+      var courseReview = this.get('course_review');
+      var professorReview = this.get('professor_review');
+
+      var hasCourseRating = courseReview.get('ratings').hasRated();
+      var hasProfessorRating = professorReview.get('ratings').hasRated();
+      var hasCourseReview = !!courseReview.get('comment');
+      var hasProfessorReview = !!professorReview.get('comment');
+
+      return hasProfessorRating && hasCourseRating &&
+          hasProfessorReview && hasCourseReview;
+    }
+
+  });
+
+  var UserCourseView = RmcBackbone.View.extend({
+    initialize: function(options) {
     },
 
     render: function() {
@@ -500,8 +608,8 @@ function(RmcBackbone, $, _jqueryui, _, _s, ratings, _select2, _autosize,
     className: 'user-comment',
 
     initialize: function(options) {
-      this.review = options.review;
-      this.userCourse = options.userCourse;
+      this.context = options.context;
+      this.comment = options.comment;
       this.placeholder = options.placeholder;
       this.reviewType = options.reviewType;
       this.template = _.template($('#user-comment-tpl').html());
@@ -510,7 +618,7 @@ function(RmcBackbone, $, _jqueryui, _, _s, ratings, _select2, _autosize,
     render: function() {
       this.$el.html(this.template(_.extend(this.review.toJSON(), {
         placeholder: this.placeholder,
-        user_name: this.userCourse.get('user').get('name')
+        user_name: this.context.get('user').get('name')
       })));
 
       var $comments = this.$('.comments')
@@ -519,7 +627,7 @@ function(RmcBackbone, $, _jqueryui, _, _s, ratings, _select2, _autosize,
 
       _.defer(function() { $comments.trigger('input'); });
 
-      if (this.review.get('comment')) {
+      if (this.review.get('text')) {
         this.showShare();
         this.onFocus();
       }
@@ -542,7 +650,7 @@ function(RmcBackbone, $, _jqueryui, _, _s, ratings, _select2, _autosize,
     },
 
     onSave: function() {
-      this.review.set('comment', this.$('.comments').val());
+      this.review.set('text', this.$('.comments').val());
 
       this.$('.save-review')
         .removeClass('btn-primary btn-success')
@@ -554,12 +662,13 @@ function(RmcBackbone, $, _jqueryui, _, _s, ratings, _select2, _autosize,
     },
 
     onShare: function() {
-      this.userCourse.promptPostToFacebook(this.reviewType);
+      //TODO: publish to facebook
+      //this.userCourse.promptPostToFacebook(this.reviewType);
     },
 
     allowSave: function() {
-      var isChanged = this.review.get('comment') != this.$('.comments').val()
-      if (this.saving || !this.review.get('comment') || !isChanged) {
+      var isChanged = this.review.get('text') != this.$('.comments').val()
+      if (this.saving || !this.review.get('text') || !isChanged) {
         return;
       }
 
@@ -772,7 +881,7 @@ function(RmcBackbone, $, _jqueryui, _, _s, ratings, _select2, _autosize,
   return {
     UserCourse: UserCourse,
     UserCourses: UserCourses,
-    UserCourseView: UserCourseView,
+    CourseCommentView: CourseCommentView,
     ReviewModalView: ReviewModalView,
     ReviewStarsView: ReviewStarsView
   };

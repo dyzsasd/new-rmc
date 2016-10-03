@@ -1,17 +1,6 @@
 import mongoengine
 
 from rmc.settings import mongodb_settings
-
-
-mongoengine.connect(
-    db=mongodb_settings['db'],
-    username=mongodb_settings['user'],
-    password=mongodb_settings['password'],
-    host=mongodb_settings['host'],
-    port=mongodb_settings['port'],
-)
-
-
 from course import Course  # @UnusedImport
 from department import Department  # @UnusedImport
 from exam import Exam  # @UnusedImport
@@ -33,3 +22,14 @@ from course_alert import BaseCourseAlert  # @UnusedImport
 from course_alert import GcmCourseAlert  # @UnusedImport
 from scholarship import Scholarship  # @UnusedImport
 from review import SimpleReview
+from comment import CourseComment
+from comment import ProfessorInCourseComment
+
+
+mongoengine.connect(
+    db=mongodb_settings['db'],
+    username=mongodb_settings['user'],
+    password=mongodb_settings['password'],
+    host=mongodb_settings['host'],
+    port=mongodb_settings['port'],
+)

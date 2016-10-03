@@ -4,11 +4,27 @@ require(
 function($, course, tookThis, user, tips, prof, _exam, ratings, user_course,
     _review, _sign_in, _section) {
 
-  course.CourseCollection.addToCache(pageData.courseObj);
+  var course_id = window.location.pathname.split('/').slice(-1)[0];
+  var courseObj = new course.Course({id: course_id});
+  courseObj.fetch();
+
+  //all these function should be Asynchronise
+
+  var overallRating = course.get('overall');
+  overallRating['name'] = 'overall';
+  var overallRatingModel = new ratings.RatingModel(overallRating);
+  var ratingBoxView = new ratings.RatingBoxView({model: overallRatingModel});
+  $('#rating-box-container').html(ratingBoxView.render().el);
+
+
+
+
+
+
+  course.CourseCollection.addToCache(courseObj);
   user_course.UserCourses.addToCache(pageData.userCourseObjs);
   prof.ProfCollection.addToCache(pageData.professorObjs);
 
-  var courseObj = pageData.courseObj;
   var courseModel = course.CourseCollection.getFromCache(courseObj.id);
   var userCourse = courseModel.get('user_course');
 

@@ -118,18 +118,6 @@
   </div>
 {% endblock %}
 
-{% block scripts %}
-<script>
-  window.pageData.courseObj = {{ course_obj|tojson|safe }};
-  window.pageData.tipObjs = {{ tip_objs|tojson|safe }};
-  window.pageData.userCourseObjs = {{ user_course_objs|tojson|safe }};
-  window.pageData.userObjs = {{ user_objs|tojson|safe }};
-  window.pageData.professorObjs = {{ professor_objs|tojson|safe }};
-  window.pageData.examObjs = {{ exam_objs|tojson|safe }};
-  window.pageData.examUpdatedDate = {{ exam_updated_date|tojson|safe }};
-</script>
-{% endblock %}
-
 {# TODO(david): Have underscore templates specify their deps. #}
 {% block templates %}
   {% include 'prof.html' %}

@@ -5,6 +5,45 @@ define(
 function(RmcBackbone, $, _, _s, ratings, __, util, jqSlide, _prof, toastr,
     _section, _work_queue, sign_in) {
 
+  var Course = RMCBackbone.Model.extend({
+    urlRoot: '/api/course',
+    defaults: {
+      id: 'unknown course',
+      code: 'unknown code',
+      name: 'unknown name',
+      description: 'empty description',
+
+      easiness: {
+        rating: -1,
+        count: 0
+      },
+      interest: {
+        rating: -1,
+        count: 0
+      },
+      usefulness: {
+        rating: -1,
+        count: 0
+      },
+      overall: {
+        rating: -1,
+        count: 0
+      },
+      professor_ids: [],
+      prereqs: ''
+    },
+
+    getRatings: function () {
+      return [
+          this.get('easiness'),
+          this.get('interest'),
+          this.get('usefulness'),
+          this.get('overall')
+      ]
+    }
+
+  });
+
   var CourseModel = RmcBackbone.Model.extend({
     defaults: {
       id: 'SCI 238',
@@ -445,34 +484,28 @@ function(RmcBackbone, $, _, _s, ratings, __, util, jqSlide, _prof, toastr,
     className: 'course-inner',
 
     initialize: function(attributes) {
+      this.course = attributes.course;
+
       this.courseModel = attributes.courseModel;
       this.userCourse = attributes.userCourse;
-      this.canShowAddReview =
-        'canShowAddReview' in attributes ? attributes.canShowAddReview : true;
-      this.canReview =
-          this.userCourse &&
-          this.userCourse.hasTaken() &&
-          this.canShowAddReview;
       this.courseView = attributes.courseView;  // optional
       this.shouldLinkifySectionProfs = (
           attributes.shouldLinkifySectionProfs || false);
 
       this.ratingsView = new ratings.RatingsView({
-        ratings: this.courseModel.get('ratings'),
-        userCourse: this.userCourse,
+        ratings: this.course.getRatings(),
         subject: 'course'
       });
 
-      if (this.canReview) {
-        // TODO(david): Get user review data, and don't show or show atered if
-        // no user or user didn't take course.
-        // TODO(mack): remove circular dependency
-        var _user_course = require('user_course');
-        this.userCourseView = new _user_course.UserCourseView({
-          userCourse: this.userCourse,
-          courseModel: this.courseModel
-        });
-      }
+      // TODO(david): Get user review data, and don't show or show atered if
+      // no user or user didn't take course.
+      // TODO(mack): remove circular dependency
+      var _user_course = require('user_course');
+      this.userCourseView = new _user_course.UserCourseView({
+        userCourse: this.userCourse,
+
+        courseModel: this.course
+      });
 
       if (this.courseModel.has('sections')) {
         this.sectionCollectionView = new _section.SectionCollectionView({
@@ -667,7 +700,7 @@ function(RmcBackbone, $, _, _s, ratings, __, util, jqSlide, _prof, toastr,
 
 
   var CourseCollection = RmcBackbone.Collection.extend({
-    model: CourseModel
+    model: Course
   });
   CourseCollection.registerCache('course');
 
@@ -714,7 +747,7 @@ function(RmcBackbone, $, _, _s, ratings, __, util, jqSlide, _prof, toastr,
   });
 
   return {
-    CourseModel: CourseModel,
+    Course: Course,
     CourseView: CourseView,
     CourseInnerView: CourseInnerView,
     CourseCollection: CourseCollection,
