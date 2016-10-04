@@ -4,10 +4,10 @@ import rmc.models as m
 import rmc.server.view_helpers as view_helpers
 
 
-course_view = flask.Blueprint('course_view', __name__, url_prefix='/course')
+view = flask.Blueprint('course_view', __name__, url_prefix='/course')
 
 
-@course_view.route('/')
+@view.route('/')
 def course():
     # TODO(mack): move into COURSES_SORT_MODES
     def clean_sort_modes(sort_mode):
@@ -34,7 +34,7 @@ def course():
     )
 
 
-@course_view.route('/<string:course_id>')
+@view.route('/<string:course_id>')
 def course_page(course_id):
     course = m.Course.objects.with_id(course_id)
     if not course:

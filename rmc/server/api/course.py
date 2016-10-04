@@ -18,7 +18,7 @@ def get_courses(course_id):
 
 
 
-@api.route('/api/course-search', methods=['GET'])
+@api.route('/search', methods=['GET'])
 # TODO(mack): find a better name for function
 # TODO(mack): a potential problem with a bunch of the sort modes is if the
 # value they are sorting by changes in the objects. this can lead to missing

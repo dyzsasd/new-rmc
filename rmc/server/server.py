@@ -24,8 +24,26 @@ import rmc.analytics.stats as rmc_stats
 import rmc.common.schedule_screenshot as schedule_screenshot
 import rmc.kittens.data as kitten_data
 
+from rmc.server.api import course as course_api
+from rmc.server.api import schedule as schedule_api
+from rmc.server.api import user as user_api
+
+from rmc.server.views import course as course_view
+from rmc.server.views import professor as professor_view
+from rmc.server.views import profile as profile_view
+from rmc.server.views import schedule as schedule_view
+
 
 app.register_blueprint(api_v1.api)
+app.register_blueprint(course_api.api)
+app.register_blueprint(schedule_api.api)
+app.register_blueprint(user_api.api)
+
+app.register_blueprint(course_view.view)
+app.register_blueprint(professor_view.view)
+app.register_blueprint(profile_view.view)
+app.register_blueprint(schedule_view.view)
+
 
 VERSION = int(time.time())
 

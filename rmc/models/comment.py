@@ -19,7 +19,7 @@ class BaseComment(me.Document):
     shared_at = me.DateTimeField()
     rating_updated_at = me.DateTimeField()
     privacy = me.IntField(
-        choices=_PRIVACY_LEVELS.values, default=_PRIVACY_LEVELS['friends'])
+        choices=_PRIVACY_LEVELS.values(), default=_PRIVACY_LEVELS['friends'])
     num_voted_helpful = me.IntField(default=0)
     num_voted_not_helpful = me.IntField(default=0)
 
@@ -28,11 +28,11 @@ class BaseComment(me.Document):
     }
 
     def is_empty(self):
-        if not self.text:
+        if not self.text and self.text == '':
             return True
 
     def non_empty(self):
-        return self.is_empty()
+        return not self.is_empty()
 
 
 class CourseComment(BaseComment):

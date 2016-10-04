@@ -4,10 +4,10 @@ import rmc.models as m
 import rmc.server.view_helpers as view_helpers
 
 
-professor_view = flask.Blueprint('professor_view', __name__, url_prefix='/professor')
+view = flask.Blueprint('professor_view', __name__, url_prefix='/professor')
 
 
-@app.route('/<string:prof_id>')
+@view.route('/<string:prof_id>')
 def prof_page(prof_id):
     prof = m.Professor.objects.with_id(prof_id)
     if not prof:

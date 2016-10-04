@@ -4,10 +4,10 @@ import rmc.models as m
 import rmc.server.view_helpers as view_helpers
 
 
-schedule_view = flask.Blueprint('schedule_view', __name__, url_prefix='/schedule')
+view = flask.Blueprint('schedule_view', __name__, url_prefix='/schedule')
 
 
-@schedule_view.route('/ical/<string:profile_user_secret_id>.ics')
+@view.route('/ical/<string:profile_user_secret_id>.ics')
 def schedule_page_ical(profile_user_secret_id):
     return profile.render_schedule_ical_feed(profile_user_secret_id)
 
@@ -16,13 +16,13 @@ def schedule_page_ical(profile_user_secret_id):
 # /schedule/RIGFOY5JA.ics on regular intervals... I'm guessing user might've
 # exported improperly by just pasting the "/schedule/RIGFOY5JA" URL into their
 # calendar app's schedule import.
-@schedule_view.route('/<string:profile_user_secret_id>.ics')
+@view.route('/<string:profile_user_secret_id>.ics')
 def schedule_page_ics_redirect(profile_user_secret_id):
     return flask.redirect('/schedule/ical/%s.ics' % profile_user_secret_id,
                           301)
 
 
-@schedule_view.route('/<string:profile_user_secret_id>')
+@view.route('/<string:profile_user_secret_id>')
 def schedule_page(profile_user_secret_id):
     profile_user = (m.User.objects(secret_id=profile_user_secret_id.upper())
                     .first())

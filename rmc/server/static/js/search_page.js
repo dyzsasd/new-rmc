@@ -274,7 +274,7 @@ function($, _, _s, course, __, Backbone, RmcBackbone,
       mixpanel.people.increment({'Course search request': 1});
       // TODO(mack): use $.ajax to handle error
       $.getJSON(
-        '/api/course-search',
+        '/api/course/search',
         args,
         _.bind(function(data) {
           if (reset) {
