@@ -5,7 +5,7 @@ define(
 function(RmcBackbone, $, _, _s, ratings, __, util, jqSlide, _prof, toastr,
     _section, _work_queue, sign_in) {
 
-  var Course = RMCBackbone.Model.extend({
+  var Course = RmcBackbone.Model.extend({
     urlRoot: '/api/course',
     defaults: {
       id: 'unknown course',
