@@ -4,7 +4,7 @@ import os
 
 import flask
 
-from rmc.settings import debug_settings, DEFAULT_LOG_PATH
+from rmc.settings import debug_settings, flask_settings
 
 
 def _create_file_log_handler(log_path):
@@ -18,8 +18,7 @@ def _create_file_log_handler(log_path):
 
 app = flask.Flask(__name__)
 
-if hasattr(os.environ, 'FLASK_CONFIG'):
-    app.config.from_envvar('FLASK_CONFIG')
+app.config.update(**flask_settings)
 
 if app.debug:
     app.config['SECRET_KEY'] = debug_settings['key']
@@ -40,7 +39,6 @@ if app.debug:
     })
 else:
     logging.basicConfig(level=logging.INFO)
-    log_path = app.config.get('LOG_PATH') or DEFAULT_LOG_PATH
-    file_handler = _create_file_log_handler(log_path)
+    file_handler = _create_file_log_handler(app.config.get('LOG_PATH'))
     app.logger.addHandler(file_handler)
     logging.getLogger('').addHandler(file_handler)

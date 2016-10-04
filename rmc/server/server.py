@@ -18,7 +18,6 @@ import rmc.common.util as util
 import rmc.common.rmclogger as rmclogger
 from rmc.server.app import app
 import rmc.server.api.v1 as api_v1
-import rmc.server.profile as profile
 import rmc.server.view_helpers as view_helpers
 import rmc.analytics.stats as rmc_stats
 import rmc.common.schedule_screenshot as schedule_screenshot

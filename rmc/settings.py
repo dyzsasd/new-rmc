@@ -26,6 +26,4 @@ DEMO_ACCOUNT_FBID = '100004384843130'
 # A long token normally lasts for 60 days
 FB_FORCE_TOKEN_EXPIRATION_DAYS = 57
 
-DEFAULT_LOG_PATH = os.path.join(RMC_ROOT, 'log')
-
 from rmc.local_settings import *
