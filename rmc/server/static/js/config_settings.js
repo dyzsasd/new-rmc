@@ -16,7 +16,7 @@ define (function() {
     'ext/mailcheck': 'ext/mailcheck.min',
     'ext/jqueryMigrate': 'ext/jquery-migrate-1.2.1',
     'ext/typeahead': 'ext/typeahead.bundle',
-    'ext/react': window.env === 'dev' ? 'ext/react-0.13.1' : 'ext/react-0.13.1.min',
+    'ext/react': 'ext/react-0.13.1.min',
     'ext/classnames': 'ext/classnames-1.0.0',
 
     'moment': 'ext/moment',
