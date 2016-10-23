@@ -1,5 +1,6 @@
 import flask
 
+import rmc.common.rmclogger as rmclogger
 import rmc.models as m
 import rmc.server.view_helpers as view_helpers
 
@@ -45,12 +46,6 @@ def course_page(course_id):
 
     course_obj = course.to_dict()
 
-    tip_dict_list = m.CourseComment.get_course_comments(
-        course._id,
-        current_user.friend_ids,
-        0, 10000
-    )
-
     rmclogger.log_event(
         rmclogger.LOG_CATEGORY_IMPRESSION,
         rmclogger.LOG_EVENT_SINGLE_COURSE, {
@@ -61,7 +56,6 @@ def course_page(course_id):
 
     return flask.render_template('course_page.html',
         page_script='course_page.js',
-        course_obj=course_obj,
-        tip_objs=tip_dict_list,
+        course_obj=course_obj
     )
 

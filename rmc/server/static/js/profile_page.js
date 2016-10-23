@@ -94,6 +94,7 @@ function($, _, _s, _bootstrap, term, _course, friend, _util, user, _user_course,
     var termCollection = new term.TermCollection();
 
     _.each(transcriptObj, function(termObj) {
+      console.log("termObj", termObj)
       var termModel = new term.TermModel(termObj);
       termCollection.add(termModel);
     });

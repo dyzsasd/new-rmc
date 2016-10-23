@@ -11,8 +11,10 @@ import section
 import term
 from rmc.common import rmclogger
 from rmc.common import util
+from rmc.common.decorators import cached_property
+from rmc.models.comment import CourseComment
+from rmc.models.rating import AggregateRating
 import user_course as _user_course
-
 
 
 # TODO(david): Add usefulness
@@ -63,12 +65,6 @@ class Course(me.Document):
     meta = {
         'indexes': [
             '_keywords',
-            'interest.rating',
-            'interest.count',
-            'easiness.rating',
-            'easiness.count',
-            'usefulness.rating',
-            'usefulness.count',
         ],
     }
 
@@ -87,12 +83,12 @@ class Course(me.Document):
     # Description about the course
     description = me.StringField(required=True)
 
-    easiness = me.EmbeddedDocumentField(rating.AggregateRating,
-                                        default=rating.AggregateRating())
-    interest = me.EmbeddedDocumentField(rating.AggregateRating,
-                                        default=rating.AggregateRating())
-    usefulness = me.EmbeddedDocumentField(rating.AggregateRating,
-                                          default=rating.AggregateRating())
+#    easiness = me.EmbeddedDocumentField(rating.AggregateRating,
+#                                        default=rating.AggregateRating())
+#    interest = me.EmbeddedDocumentField(rating.AggregateRating,
+#                                        default=rating.AggregateRating())
+#    usefulness = me.EmbeddedDocumentField(rating.AggregateRating,
+#                                          default=rating.AggregateRating())
     professor_ids = me.ListField(me.StringField())
 
     antireqs = me.StringField()
@@ -121,6 +117,37 @@ class Course(me.Document):
         department = matches[0]
         number = matches[1]
         return '%s %s' % (department.upper(), number.upper())
+
+    @cached_property
+    def comments(self):
+        return [c for c in CourseComment.objects(course_id=self.id)]
+
+    @property
+    def easiness(self):
+        ratings = [
+            comment.easiness for comment in self.comments
+            if comment.easiness is not None
+        ]
+        average = len(ratings) and sum(ratings) / len(ratings)
+        return AggregateRating(rating=average, count=len(ratings))
+
+    @property
+    def interest(self):
+        ratings = [
+            comment.interest for comment in self.comments
+            if comment.interest is not None
+        ]
+        average = len(ratings) and sum(ratings) / len(ratings)
+        return AggregateRating(rating=average, count=len(ratings))
+
+    @property
+    def usefulness(self):
+        ratings = [
+            comment.usefulness for comment in self.comments
+            if comment.usefulness is not None
+        ]
+        average = len(ratings) and sum(ratings) / len(ratings)
+        return AggregateRating(rating=average, count=len(ratings))
 
     @property
     def overall(self):
@@ -404,7 +431,7 @@ class Course(me.Document):
             'easiness': self.easiness.to_dict(),
             'interest': self.interest.to_dict(),
             'usefulness': self.usefulness.to_dict(),
-            'overall': self.overall.to_dict(),
+            'overall': self.overall,
             'professor_ids': self.professor_ids,
             'prereqs': self.prereqs,
         }

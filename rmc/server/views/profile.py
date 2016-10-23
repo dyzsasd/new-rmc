@@ -1,6 +1,9 @@
+import logging
+
 import flask
 
 import rmc.models as m
+from rmc.server import profile
 import rmc.server.view_helpers as view_helpers
 
 

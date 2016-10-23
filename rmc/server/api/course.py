@@ -1,5 +1,6 @@
 import flask
 
+import rmc.common.util as util
 import rmc.models as m
 
 
@@ -14,8 +15,7 @@ def get_courses(course_id):
     if course is None:
         return flask.abort(404)
     else:
-        return course.to_dict()
-
+        return util.json_dumps(course.to_dict())
 
 
 @api.route('/search', methods=['GET'])

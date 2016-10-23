@@ -23,7 +23,9 @@ import rmc.analytics.stats as rmc_stats
 import rmc.common.schedule_screenshot as schedule_screenshot
 import rmc.kittens.data as kitten_data
 
+from rmc.server.api import comment as comment_api
 from rmc.server.api import course as course_api
+from rmc.server.api import prof as prof_api
 from rmc.server.api import schedule as schedule_api
 from rmc.server.api import user as user_api
 
@@ -35,6 +37,8 @@ from rmc.server.views import schedule as schedule_view
 
 app.register_blueprint(api_v1.api)
 app.register_blueprint(course_api.api)
+app.register_blueprint(comment_api.api)
+app.register_blueprint(prof_api.api)
 app.register_blueprint(schedule_api.api)
 app.register_blueprint(user_api.api)
 

@@ -23,7 +23,7 @@
         <div class="tabbable">
           <ul class="nav nav-tabs">
             <li class="active"><a href="#Overview" data-toggle="tab"><p></p>Overview</a></li>
-            <li><a href="#Reviews" data-toggle="tab" id="review-tab"><p>{{ tip_objs|length }}</p>Reviews</a></li>
+            <li><a href="#Reviews" data-toggle="tab" id="review-tab"><p id="comments-count">0</p>Reviews</a></li>
             <li><a href="#Profs" data-toggle="tab"><p>{{ course_obj['professor_ids']|length }}</p>Profs</a></li>
             <li><a href="#Friends" data-toggle="tab"><p></p>Friends</a></li>
             <!-- <li><a href="#Videos" data-toggle="tab"><p></p>Videos</a></li>
@@ -34,9 +34,7 @@
         <p class="lead">{{ course_obj['name'] }}</p>
 0x7FF035 #}
       </div>
-{# 0x7FF028
       <div class="span2" id="rating-box-container"></div>
-0x7FF035 #}
     </div>
   </div>
 {% endblock %}
@@ -121,6 +119,7 @@
 {# TODO(david): Have underscore templates specify their deps. #}
 {% block templates %}
   {% include 'prof.html' %}
+  {% include 'comment.html' %}
   {% include 'tips.html' %}
   {% include 'took_this.html' %}
   {% include 'course.html' %}

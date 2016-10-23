@@ -254,6 +254,7 @@ def render_profile_page(profile_user_id, current_user=None):
 
     # Fetch courses for transcript, which need more detailed information
     # than other courses (such as mutual and last term courses for friends)
+    print profile_course_ids
     transcript_courses = list(m.Course.objects(id__in=profile_course_ids))
 
     # Fetch remainining courses that need less data. This will be mutual

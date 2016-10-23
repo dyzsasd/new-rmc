@@ -1,42 +1,81 @@
 require(
-['ext/jquery','course', 'took_this', 'user', 'tips', 'prof', 'exam', 'ratings',
+['ext/jquery','comment', 'course', 'took_this', 'user', 'tips', 'prof', 'exam', 'ratings',
 'user_course', 'review', 'sign_in', 'section'],
-function($, course, tookThis, user, tips, prof, _exam, ratings, user_course,
+function($, _comment, course, tookThis, user, tips, prof, _exam, ratings, user_course,
     _review, _sign_in, _section) {
 
   var course_id = window.location.pathname.split('/').slice(-1)[0];
   var courseObj = new course.Course({id: course_id});
-  courseObj.fetch();
+  var comments = new _comment.CommentCollection({course_id: course_id});
+  var courseComment = new _comment.CourseComment({ course_id: course_id});
+  var courseProfComment = new _comment.CourseProfComment({ course_id: course_id});
+  var profCollection = new prof.ProfCollection();
 
-  //all these function should be Asynchronise
+  courseObj.fetch().then(function () {
+    var ratingsView = new ratings.RatingsView({
+      ratings: courseObj.getRatings(),
+      subject: 'course'
+    });
+    console.log(courseObj);
 
-  var overallRating = course.get('overall');
-  overallRating['name'] = 'overall';
-  var overallRatingModel = new ratings.RatingModel(overallRating);
-  var ratingBoxView = new ratings.RatingBoxView({model: overallRatingModel});
-  $('#rating-box-container').html(ratingBoxView.render().el);
+    $('.ratings-placeholder').replaceWith(
+      ratingsView.render().el
+    );
+    var profIds = courseObj.get('professor_ids') || [];
+    var profQueryParas = [];
+    profIds.forEach(function (id) {
+      profQueryParas.push({name: 'prof_id', value: id})
+    });
+    return profCollection.fetch({
+      data: $.param(profQueryParas)
+    });
+  }).then(function () {
+    console.log(profCollection);
+    return comments.count();
+  }).then(function (response) {
+    $('#comments-count').html(response);
+    return comments.load();
+  }).then(function () {
+    if (comments.length) {
+      var commentsView = new _comment.CommentCollectionExpandableView({
+        comments: comments,
+        course: courseObj,
+        pageType: 'course'
+      });
+      $('#tips-collection-container').replaceWith(commentsView.render().el)
+    }
+    return courseComment.getOrCreate();
+  }).then(function () {
+    return courseProfComment.getOrCreate();
+  }).then(function () {
+    var editableCommentView = new _comment.EditableCommentView({
+      course: courseObj,
+      courseComment: courseComment,
+      courseProfComment: courseProfComment,
+      profCollection: profCollection
+    });
+    $('.review-placeholder').replaceWith(editableCommentView.render().el);
+  });
 
 
-
-
-
-
-  course.CourseCollection.addToCache(courseObj);
+/*course.CourseCollection.addToCache(courseObj);
   user_course.UserCourses.addToCache(pageData.userCourseObjs);
   prof.ProfCollection.addToCache(pageData.professorObjs);
 
-  var courseModel = course.CourseCollection.getFromCache(courseObj.id);
+  /*var courseModel = course.CourseCollection.getFromCache(courseObj.id);
   var userCourse = courseModel.get('user_course');
 
   var overallRating = courseModel.getOverallRating();
   var ratingBoxView = new ratings.RatingBoxView({ model: overallRating });
   $('#rating-box-container').html(ratingBoxView.render().el);
-
+*/
+/*
   var courseInnerView = new course.CourseInnerView({
     courseModel: courseModel,
     userCourse: userCourse,
     shouldLinkifySectionProfs: true
   });
+
   $('#course-inner-container').html(courseInnerView.render().el);
     courseInnerView.animateBars();
 
@@ -117,5 +156,5 @@ function($, course, tookThis, user, tips, prof, _exam, ratings, user_course,
 
   mixpanel.track('Impression: Single course page');
 
-  $(document.body).trigger('pageScriptComplete');
+  $(document.body).trigger('pageScriptComplete');*/
 });

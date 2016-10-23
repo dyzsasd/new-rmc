@@ -22,6 +22,7 @@ function(RmcBackbone, _, $, _course, jqSlide, _user_course, _util) {
 
     initialize: function(options) {
       this.termModel = options.termModel;
+      console.log("termModel", this.termModel)
       this.courses = this.termModel.get('courses');
 
       this.courseCollectionView = new _course.CourseCollectionView({
@@ -117,6 +118,7 @@ function(RmcBackbone, _, $, _course, jqSlide, _user_course, _util) {
     render: function() {
       this.$el.empty();
       this.termCollection.each(function(termModel, idx) {
+        console.log(idx, termModel)
         var expand = idx < 3;
         var termView = new TermView({
           tagName: 'li',

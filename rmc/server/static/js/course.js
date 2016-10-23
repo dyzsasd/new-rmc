@@ -33,13 +33,117 @@ function(RmcBackbone, $, _, _s, ratings, __, util, jqSlide, _prof, toastr,
       prereqs: ''
     },
 
+    referenceFields: function() {
+      // TODO(mack): remove require() call
+      var _user_course = require('user_course');
+      return {
+        'user_course': [
+          'user_course_id', _user_course.UserCourses
+        ],
+        'profile_user_course': [
+          'profile_user_course_id', _user_course.UserCourses
+        ],
+        'friend_user_courses': [
+          'friend_user_course_ids', _user_course.UserCourses
+        ],
+        'professors': [
+          'professor_ids', _prof.ProfCollection
+        ]
+      };
+    },
+
+    initialize: function(attributes) {
+      // TODO(david): Be consistent in the way we return ratings from the server
+      if (attributes.overall) {
+        var ratingModel = new ratings.RatingModel({
+          name: 'overall',
+          rating: attributes.overall.rating,
+          count: attributes.overall.count
+        });
+        this.set('overall', ratingModel)
+      }
+      if (attributes.sections) {
+        this.set('sections',
+            new _section.SectionCollection(attributes.sections));
+      }
+    },
+
     getRatings: function () {
-      return [
-          this.get('easiness'),
-          this.get('interest'),
-          this.get('usefulness'),
-          this.get('overall')
-      ]
+      var easiness = new ratings.RatingModel({
+        name: 'easiness',
+        rating: this.get('easiness').rating,
+        count: this.get('easiness').count
+      });
+      var interest = new ratings.RatingModel({
+        name: 'interest',
+        rating: this.get('interest').rating,
+        count: this.get('interest').count
+      });
+      var usefulness = new ratings.RatingModel({
+        name: 'usefulness',
+        rating: this.get('usefulness').rating,
+        count: this.get('usefulness').count
+      });
+      var overall = new ratings.RatingModel({
+        name: 'overall',
+        rating: this.get('overall').rating,
+        count: this.get('overall').count
+      });
+      return new ratings.RatingCollection([easiness, interest, usefulness, overall]);
+    },
+
+    getInteractMode: function() {
+      var userCourse = this.get('user_course');
+      var mode = userCourse && userCourse.get('term_id') ? 'remove' : 'add';
+      if (window.pageData.ownProfile === false && mode === 'remove') {
+        return null;
+      } else {
+        return mode;
+      }
+    },
+
+    getOverallRating: function() {
+      return this.get('overall');
+    },
+
+    getReqsHtml: function(reqsStr) {
+
+      var takenCourseIds = {};
+      if (pageData.currentUserId) {
+        // TODO(mack): remove require() call
+        var _user = require('user');
+        var userId = pageData.currentUserId.$oid;
+        var user = _user.UserCollection.getFromCache(userId);
+        _.each(user.get('course_ids'), function(courseId) {
+          takenCourseIds[courseId] = true;
+        });
+      }
+
+      // TODO(mack): highlight courses you've taken
+      var splits = reqsStr.split(/(\W+)/);
+      var newSplits = [];
+      _.each(splits, function(split) {
+        var matchesCourseId = !!split.match(/^[A-Z]{2,}\d{3}[A-Z]?$/);
+        var newSplit = split;
+        if (matchesCourseId) {
+          var splitLower = split.toLowerCase();
+
+          // TODO(mack): use html elements rather than string concatentation
+          if (_.has(takenCourseIds, splitLower)) {
+            // If you've taken the course, add the css class 'taken'
+            newSplit = _s.sprintf(
+                '<a class="req taken" href="/course/%s">%s</a>',
+                split.toLowerCase(), split);
+          } else {
+            newSplit = _s.sprintf(
+                '<a class="req" href="/course/%s">%s</a>', split.toLowerCase(),
+                split);
+          }
+        }
+        newSplits.push(newSplit);
+      });
+
+      return newSplits.join('');
     }
 
   });
@@ -365,6 +469,7 @@ function(RmcBackbone, $, _, _s, ratings, __, util, jqSlide, _prof, toastr,
       this.$('[title]').tooltip();
 
       var overallRating = this.courseModel.getOverallRating();
+      console.log("overallRating is", overallRating)
       this.ratingBoxView = new ratings.RatingBoxView({ model: overallRating });
 
       _work_queue.add(function() {
@@ -452,7 +557,7 @@ function(RmcBackbone, $, _, _s, ratings, __, util, jqSlide, _prof, toastr,
     expandCourse: function(evt) {
       if (!this.courseInnerView) {
         this.courseInnerView = new CourseInnerView({
-          courseModel: this.courseModel,
+          course: this.courseModel,
           userCourse: this.userCourse,
           canShowAddReview: this.canShowAddReview,
           courseView: this
@@ -485,10 +590,8 @@ function(RmcBackbone, $, _, _s, ratings, __, util, jqSlide, _prof, toastr,
 
     initialize: function(attributes) {
       this.course = attributes.course;
+      this.comments = attributes.comments;
 
-      this.courseModel = attributes.courseModel;
-      this.userCourse = attributes.userCourse;
-      this.courseView = attributes.courseView;  // optional
       this.shouldLinkifySectionProfs = (
           attributes.shouldLinkifySectionProfs || false);
 
@@ -497,19 +600,9 @@ function(RmcBackbone, $, _, _s, ratings, __, util, jqSlide, _prof, toastr,
         subject: 'course'
       });
 
-      // TODO(david): Get user review data, and don't show or show atered if
-      // no user or user didn't take course.
-      // TODO(mack): remove circular dependency
-      var _user_course = require('user_course');
-      this.userCourseView = new _user_course.UserCourseView({
-        userCourse: this.userCourse,
-
-        courseModel: this.course
-      });
-
-      if (this.courseModel.has('sections')) {
+      if (this.course.has('sections')) {
         this.sectionCollectionView = new _section.SectionCollectionView({
-          collection: this.courseModel.get('sections'),
+          collection: this.course.get('sections'),
           shouldLinkifyProfs: this.shouldLinkifySectionProfs
         });
       }
@@ -520,11 +613,10 @@ function(RmcBackbone, $, _, _s, ratings, __, util, jqSlide, _prof, toastr,
     render: function(moreDetails) {
       this.$el.html(this.template({
         more_details: moreDetails,
-        course: this.courseModel,
+        course: this.course,
         user_course: this.userCourse,
         user: this.userCourse && this.userCourse.get('user'),
-        can_review: this.canReview,
-        mode: this.courseModel.getInteractMode()
+        mode: this.course.getInteractMode()
       }));
 
       if (this.userCourseView) {

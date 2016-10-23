@@ -46,12 +46,11 @@ def remove_course():
 
     return ''
 
-
 # XXX[uw](Sandy): Make this not completely fail when hitting this endpoint,
 # otherwise the user would have wasted all their work. We can do one of 1. a FB
 # login on the client 2. store their data for after they login 3. don't let
 # them start writing if they aren't logged in. 1 or 3 seems best
-@api.route('/course', methods=['POST', 'PUT'])
+@api.route('/course/', methods=['POST', 'PUT'])
 @view_helpers.login_required
 def user_course():
     uc_data = util.json_loads(flask.request.data)

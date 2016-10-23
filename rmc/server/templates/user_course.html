@@ -3,13 +3,6 @@
 {% call macros.us_template('add-review-tpl') %}
 <div class="user-course">
   <div class="row-fluid">
-    <div class="span12">
-      <p class="lead">
-        You took this course in <%- term_name %>. Was it&hellip;
-      </p>
-    </div>
-  </div>
-  <div class="row-fluid">
     <div class="span4">
       <div class="course-ratings-placeholder"></div>
     </div>
@@ -44,7 +37,7 @@
 
 {% call macros.us_template('user-comment-tpl') %}
 <textarea rows="3" placeholder="<%- placeholder %>"
-  class="comments"><%- comment %></textarea>
+  class="comments"><%- text %></textarea>
 <div class="well well-small submit-bar hide-initial">
   <button type="submit" class="save-review btn btn-primary">
     <i class="icon-comment"></i> Comment!
@@ -73,7 +66,7 @@
         </li>
       </ul>
     </li>
-    can see that <%- user_name %> wrote this
+    can see that wrote this
   </span>
 </div>
 {% endcall %}

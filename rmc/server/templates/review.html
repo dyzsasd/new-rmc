@@ -12,6 +12,29 @@
 </div>
 {% endcall %}
 
+{% call macros.us_template('post-comment-tpl') %}
+<div class="row-fluid">
+  <div class="span3 author">
+    <div>
+      <small class="comment-date">
+        <span class="muted">
+          <% if (last_updated_at) { %>
+          <%- moment(last_updated_at).format('MMM D, YYYY') %>
+          <% } else { %>
+            Anonymous
+          <% } %>
+        </span>
+      </small>
+    </div>
+  </div>
+  <div class="span9">
+    <div class="comment-text">
+      <%- text %>
+    </div>
+  </div>
+</div>
+{% endcall %}
+
 {% call macros.us_template('comment-tpl') %}
 <div class="row-fluid">
   <div class="span3 author">

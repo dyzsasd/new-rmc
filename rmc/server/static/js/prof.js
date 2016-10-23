@@ -4,6 +4,7 @@ define(
 function($, _, _s, bootstrap, jqSlide, RmcBackbone, ratings, util, review) {
 
   var Prof = RmcBackbone.Model.extend({
+    rootUrl: '/api/prof/',
     defaults: {
       id: 'charles_l.a._clarke',
       name: 'Charles L.A. Clarke',
@@ -60,6 +61,7 @@ function($, _, _s, bootstrap, jqSlide, RmcBackbone, ratings, util, review) {
 
   var ProfCollection = RmcBackbone.Collection.extend({
     model: Prof,
+    url: '/api/prof/collection/',
 
     // TODO(david): Allow changing sort/filter options
     comparator: function(prof) {
