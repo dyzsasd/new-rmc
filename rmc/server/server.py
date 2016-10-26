@@ -81,7 +81,7 @@ def csrf_protect():
 
 if __name__ == '__main__':
     # Late import since this isn't used on production
-    import flask_debugtoolbar
-
-    toolbar = flask_debugtoolbar.DebugToolbarExtension(app)
+    if rmc_settings.debug:
+        import flask_debugtoolbar
+        toolbar = flask_debugtoolbar.DebugToolbarExtension(app)
     app.run()

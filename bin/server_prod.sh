@@ -6,14 +6,14 @@ echo $ROOT
 
 PYTHONPATH="$ROOT/..:$PYTHONPATH" \
   uwsgi \
-    --http :5000
-    --env FLASK_CONFIG=$ROOT/config/flask_prod.py \
+    --http-socket 0.0.0.0:6000 \
     --wsgi-file $ROOT/rmc/server/server.wsgi \
     --callable app \
-    --master \
+	--master \
     --workers 4 \
     --close-on-exec \
     --enable-threads \
     --virtualenv $ROOT/env \
     --buffer-size 32768 \
-    --pidfile /tmp/rmc.pid 
+    --pidfile /tmp/rmc.pid \
+    --stats 127.0.0.1:9191	
