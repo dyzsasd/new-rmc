@@ -1,3 +1,3 @@
-from rmc.server.server import app, before_app_run
+from rmc.server.server import app
 
-before_app_run()
+app.run()
