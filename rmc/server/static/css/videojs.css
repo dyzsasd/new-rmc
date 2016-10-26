@@ -1,0 +1,136 @@
+.video-holder,
+.video-holder * {
+    -webkit-box-sizing: border-box !important;
+    -moz-box-sizing: border-box !important;
+    box-sizing: border-box !important
+}
+
+.centered {
+    width: 100%
+}
+
+.video-holder .vjs-big-play-button {
+    left: 50%;
+    width: 80px;
+    margin-left: -50px;
+    height: 80px;
+    top: 50%;
+    margin-top: -40px;
+    background: rgba(202, 201, 188, 0.7);
+    -webkit-border-radius: 50%;
+    border-radius: 50%;
+}
+
+.vjs-default-skin:hover .vjs-big-play-button,
+.vjs-default-skin .vjs-big-play-button:focus {
+    background: rgba(202, 201, 188, 0.7);
+    border-color: rgba(202, 201, 188, 0.7)
+}
+
+.playlist-components {
+    height: 340px;
+    width: 100%;
+    padding: 0 0 0 10px overflow: scroll;
+    overflow: scroll;
+}
+
+.video-js,
+.playlist-components {
+    display: inline-block;
+    margin-right: -4px;
+    vertical-align: top;
+}
+
+.button-holder {
+    padding: 10px;
+    height: 36px;
+}
+
+.vjs-default-skin .vjs-control-bar {
+    background: #e3e2e3;
+}
+
+.vjs-current-time-display,
+.vjs-duration-display,
+.vjs-default-skin .vjs-control:before,
+.vjs-default-skin .vjs-play-control:before {
+    color: #666666;
+    text-shadow: none;
+}
+
+.playlist {
+    height: 340px;
+    width: 100%;
+    color: #c0c0c0;
+    display: block;
+    margin: -2px 0 0 0;
+    padding: 0;
+    position: relative;
+}
+
+#next {
+    float: right
+}
+
+#prev {
+    float: left
+}
+
+#prev,
+#next {
+    cursor: pointer;
+    color: white;
+    text-transform: uppercase;
+    font-size: 12px;
+}
+
+.playlist ul {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+.playlist ul li {
+    padding: 10px;
+    cursor: pointer;
+    color: #afafaf;
+    position: relative;
+    -webkit-transition: linear 0.5s;
+    -moz-transition: linear 0.5s;
+    -o-transition: linear 0.5s;
+    transition: linear 0.5s;
+    font-size: 18px;
+}
+
+.playlist ul li.active {
+    color: #35c0c7;
+}
+
+.playlist ul li:hover {
+    color: #35c0c7;
+}
+
+.playlist .poster,
+.playlist .title {
+    display: inline-block;
+    vertical-align: top
+}
+
+.playlist .number {
+    padding-right: 10px;
+    display: none
+}
+
+.playlist .poster {
+    display: none
+}
+
+.playlist .title {
+    padding-left: 0
+}
+
+@media only screen and (max-width: 767px) {
+    .playlist-components {
+        padding: 20px 0;
+    }
+}
