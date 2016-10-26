@@ -50,11 +50,11 @@ def index():
         rmclogger.LOG_EVENT_LANDING,
     )
 
-    settings = {
-        'fbAppId': rmc_settings.fb_app_id
-    }
+    return flask.render_template('main.html')
 
-    return flask.render_template('index.html', settings=settings)
+@app.route('/template/<string:file>')
+def template(file):
+    return flask.render_template(file)
 
 
 @app.before_request
