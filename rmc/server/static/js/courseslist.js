@@ -1,7 +1,7 @@
 angular.module('RmcUI.courseslist', ['ngResource'])
 
-  .controller('CourseslistCtrl', ['$scope', '$location', '$routeParams', '$timeout', 'SearchClient',
-    function ($scope, $location, $routeParams, $timeout, SearchClient) {
+  .controller('CourseslistCtrl', ['$scope', '$routeParams', '$timeout', 'SearchClient',
+    function ($scope, $routeParams, $timeout, SearchClient) {
       $scope.courseCollection = [];
       var hasMore = true;
       $scope.query = $routeParams.query || '';
@@ -45,7 +45,8 @@ angular.module('RmcUI.courseslist', ['ngResource'])
         $timeout.cancel(timeoutPromise);
         if (newQuery !== oldQuery && oldQuery !== undefined && newQuery !== undefined) {
           timeoutPromise = $timeout(function () {
-            $location.search('query', newQuery || null);
+            init();
+            updateCourses($scope.courseCollection.length);
           }, delayInMs);
         }
       }, true);
