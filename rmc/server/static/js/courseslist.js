@@ -24,7 +24,7 @@ angular.module('RmcUI.courseslist', ['ngResource'])
         SearchClient.find({
           offset: offset,
           count: 10,
-          keyword: $scope.query
+          keywords: $scope.query
         }).$promise
           .then(function (response) {
             if (response.length !== 0) {
