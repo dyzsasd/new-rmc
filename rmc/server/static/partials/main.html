@@ -38,7 +38,7 @@
     <!--header start -->
     <header>
         <nav class="navbar " role="navigation">
-            <div class="container-fluid">
+            <div class="container-fluid" ng-controller="NavCtrl">
                 <a class="navbar-brand" href="#"><img src="/static/images/logo.png" class="img-responsive"></a>
                 <div class="container">
                     <!-- Brand and toggle get grouped for better mobile display -->
@@ -48,9 +48,10 @@
                     <!-- Collect the nav links, forms, and other content for toggling -->
                     <div class="collapse navbar-collapse navbar-ex1-collapse">
                         <ul class="nav navbar-nav">
-                            <li class="active"><a href="#">Home</a></li>
-                            <li><a href="/course">Explore Courses</a></li>
+                            <li class="{{ navButtonClass('/') }}"><a href="/">Home</a></li>
+                            <li  class="{{ navButtonClass('/course') }}"><a href="/course">Explore Courses</a></li>
                             <li><a href="#">Became a tutor?</a></li>
+                            <li>{{ route }}</li>
                         </ul>
                         <ul class="nav navbar-nav navbar-right">
                             <li><a href="#">Register</a></li>

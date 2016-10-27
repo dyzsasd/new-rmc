@@ -10,10 +10,6 @@ from rmc.server.api import course as course_api
 from rmc.server.api import prof as prof_api
 from rmc.server.api import schedule as schedule_api
 from rmc.server.api import user as user_api
-from rmc.server.views import course as course_view
-from rmc.server.views import professor as professor_view
-from rmc.server.views import profile as profile_view
-from rmc.server.views import schedule as schedule_view
 import rmc.server.view_helpers as view_helpers
 from rmc import settings as rmc_settings
 
@@ -25,14 +21,17 @@ app.register_blueprint(prof_api.api)
 app.register_blueprint(schedule_api.api)
 app.register_blueprint(user_api.api)
 
-app.register_blueprint(course_view.view)
-app.register_blueprint(professor_view.view)
-app.register_blueprint(profile_view.view)
-app.register_blueprint(schedule_view.view)
+#app.register_blueprint(course_view.view)
+#app.register_blueprint(professor_view.view)
+#app.register_blueprint(profile_view.view)
+#app.register_blueprint(schedule_view.view)
 
 
 @app.route('/')
-def index():
+@app.route('/course')
+@app.route('/course/<string:param>')
+@app.route('/course/<string:param>/video')
+def main(param=''):
     # Redirect logged-in users to profile
     # TODO(Sandy): If we request extra permissions from FB, we'll need to show
     # them the landing page to let them to Connect again and accept the new
@@ -50,11 +49,7 @@ def index():
         rmclogger.LOG_EVENT_LANDING,
     )
 
-    return flask.render_template('main.html')
-
-@app.route('/template/<string:file>')
-def template(file):
-    return flask.render_template(file)
+    return flask.current_app.send_static_file('partials/main.html')
 
 
 @app.before_request

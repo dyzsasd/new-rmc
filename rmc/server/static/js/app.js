@@ -23,22 +23,31 @@ angular.module('RmcUI', [
 
 .config(['$routeProvider', function ($routeProvider) {
   $routeProvider.when('/', {
-    templateUrl: 'template/index.html',
+    templateUrl: '/static/partials/index.html',
     controller: 'IndexCtrl'
   });
   $routeProvider.when('/course', {
-    templateUrl: 'template/courseslist.html',
+    templateUrl: '/static/partials/courseslist.html',
     controller: 'CourseslistCtrl'
   });
-  $routeProvider.when('/course/:id', {
-    templateUrl: 'template/course-overview.html',
+  $routeProvider.when('/course/:course_id', {
+    templateUrl: '/static/partials/course-overview.html',
     controller: 'CourseOverviewCtrl'
   });
-  $routeProvider.when('/course/:id/video', {
-    templateUrl: 'template/course.html',
+  $routeProvider.when('/course/:course_id/video', {
+    templateUrl: '/static/partials/course.html',
     controller: 'CourseCtrl'
   });
   $routeProvider.otherwise({redirectTo: '/'});
+}])
+
+.controller('NavCtrl', ['$scope', '$location', function ($scope, $location) {
+  $scope.navButtonClass = function (href) {
+    if (href === $location.url())
+      return "active";
+    else
+      return "";
+  };
 }])
 
 .run(['$http', '$cookies', function ($http, $cookies) {

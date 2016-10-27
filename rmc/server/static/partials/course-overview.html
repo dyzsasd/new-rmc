@@ -8,7 +8,7 @@
             <div class="col-xs-12">
               <div class="row">
                 <div class="col-xs-6">
-                  <h2>CSC104, Computer Science</h2></div>
+                  <h2>{{ course.code }}, {{ course.name }}</h2></div>
                 <div class="col-xs-6">
                   <div class="pull-right"><a href="#.">Overview</a> <a href="#.">Video</a></div>
                 </div>
@@ -26,7 +26,7 @@
                   <div class="col-sm-2 col-xs-3">
                     <h4 class="bold">Description</h4> </div>
                   <div class="col-sm-10 col-xs-9">
-                    <p> With a focus on telling women’s complex stories of life in Scarborough, this applied research course introduces students to the theory, methods and practice of feminist oral history. The course involves working and studying in the classroom and in the community. 15 hours of community work expected. Supplementary application required. </p>
+                    <p>{{ course.description }}</p>
                   </div>
                 </div>
               </div>
@@ -37,7 +37,7 @@
                   <div class="col-sm-2 col-xs-3">
                     <h4 class="bold">Prerequisites</h4> </div>
                   <div class="col-sm-10 col-xs-9">
-                    <p>3.5 credits in WST courses, including [WSTB05H3 and 0.5 credit at the C-level</p>
+                    <p>{{ course.prereqs }}</p>
                   </div>
                 </div>
               </div>

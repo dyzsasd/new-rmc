@@ -83,12 +83,6 @@ class Course(me.Document):
     # Description about the course
     description = me.StringField(required=True)
 
-#    easiness = me.EmbeddedDocumentField(rating.AggregateRating,
-#                                        default=rating.AggregateRating())
-#    interest = me.EmbeddedDocumentField(rating.AggregateRating,
-#                                        default=rating.AggregateRating())
-#    usefulness = me.EmbeddedDocumentField(rating.AggregateRating,
-#                                          default=rating.AggregateRating())
     professor_ids = me.ListField(me.StringField())
 
     antireqs = me.StringField()
