@@ -52,7 +52,6 @@ def get_current_user():
 
     api_key = req.values.get('api_key')
     if api_key and is_api_request():
-        print '\n\n\n\n\n\n\n', api_key, '\n\n\n\n\n\n\n'
         req.current_user = m.User.objects(api_key=api_key).first()
         if not req.current_user:
             # TODO(mack): change exceptions to not return html, but just the

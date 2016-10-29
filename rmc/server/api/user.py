@@ -1,10 +1,22 @@
 import flask
+from flask_jwt import jwt_required, current_identity
 
+import rmc.common.util as util
 import rmc.models as m
 import rmc.server.view_helpers as view_helpers
 
 
 api = flask.Blueprint('user_api', __name__, url_prefix='/api/user')
+
+@api.route('/current_user/', methods=['GET'])
+@jwt_required()
+def get_current_user():
+    user = m.User.objects(id=current_identity.id).first()
+    if user:
+        return util.json_dumps(user.to_dict())
+    else:
+        flask.abort(404)
+
 
 
 @api.route('/remove_course', methods=['POST'])

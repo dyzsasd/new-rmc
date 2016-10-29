@@ -7,8 +7,7 @@ import requests
 import time
 import urlparse
 
-from rmc.server.app import app
-import rmc.server.api.api_util as api_util
+from rmc import settings as rmc_settings
 import rmc.common.util as util
 
 # A long token normally lasts for 60 days
@@ -77,14 +76,12 @@ def get_access_token_info(access_token):
     """
     res = requests.get('https://graph.facebook.com/debug_token'
             '?input_token=%s&access_token=%s|%s' % (
-                access_token,
-                app.config['FB_APP_ID'],
-                app.config['FB_APP_SECRET']))
+                access_token, rmc_settings.fb_app_id, rmc_settings.fb_app_secret))
 
     if not res.ok or not res.json.get('data'):
         logging.error('Failed verifying FB access token. FB response: %s' %
                 res.json)
-        raise api_util.ApiBadRequestError('Failed verifying FB access token.')
+        raise RuntimeError('Failed verifying FB access token.')
 
     return res.json['data']
 

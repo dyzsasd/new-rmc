@@ -2,7 +2,9 @@ from datetime import datetime
 
 import flask
 
+from rmc import settings as rmc_settings
 import rmc.common.rmclogger as rmclogger
+from rmc.models import User
 from rmc.server.app import app
 import rmc.server.api.v1 as api_v1
 from rmc.server.api import comment as comment_api
@@ -11,7 +13,7 @@ from rmc.server.api import prof as prof_api
 from rmc.server.api import schedule as schedule_api
 from rmc.server.api import user as user_api
 import rmc.server.view_helpers as view_helpers
-from rmc import settings as rmc_settings
+from rmc.server.utils import parse_token
 
 
 app.register_blueprint(api_v1.api)
@@ -25,6 +27,16 @@ app.register_blueprint(user_api.api)
 #app.register_blueprint(professor_view.view)
 #app.register_blueprint(profile_view.view)
 #app.register_blueprint(schedule_view.view)
+
+
+@app.route('/signup', methods=['POST'])
+def sign_up():
+    user = flask.request.get_json()
+    print user
+    new_user = User.create_new_user_from_email(
+        user['first_name'], user['last_name'],
+        user['email'], user['password'])
+    return str(new_user.to_dict())
 
 
 @app.route('/')
@@ -50,28 +62,6 @@ def main(param=''):
     )
 
     return flask.current_app.send_static_file('partials/main.html')
-
-
-@app.before_request
-def csrf_protect():
-    """Require a valid CSRF token for any method other than GET."""
-    req = flask.request
-
-    # TODO(sandy): Use get-csrf-token from the API instead of excluding here
-    # Exclude API login from CSRF protection, because API clients will not yet
-    # have a CSRF token when they hit this endpoint (eg. mobile apps).
-    if req.endpoint == 'api.login_facebook':
-        return
-
-    # Based on http://flask.pocoo.org/snippets/3/, but modified to use headers
-    # and generally be more Rails-like
-    if req.method != 'GET':
-        # We intentionally don't invalidate CSRF tokens after a single use to
-        # enable multiple AJAX requests originating from the page load to all
-        # work off the same CSRF token.
-        token = flask.session.get(view_helpers.SESSION_COOKIE_KEY_CSRF, None)
-        if not token or token != req.headers.get('X-CSRF-Token'):
-            flask.abort(403)
 
 
 if __name__ == '__main__':

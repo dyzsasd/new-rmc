@@ -1,10 +1,12 @@
+from datetime import timedelta
 import logging
 from logging.handlers import TimedRotatingFileHandler
-import os
 
 import flask
+from flask_jwt import JWT, jwt_required, current_identity
 
-from rmc.settings import debug_settings, flask_settings
+from rmc.models import User
+from rmc.settings import flask_settings, SECRET_KEY
 
 
 def _create_file_log_handler(log_path):
@@ -20,8 +22,9 @@ app = flask.Flask(__name__)
 
 app.config.update(**flask_settings)
 
+app.config['SECRET_KEY'] = SECRET_KEY
+
 if app.debug:
-    app.config['SECRET_KEY'] = debug_settings['key']
     logging.basicConfig(level=logging.DEBUG)
     app.config.update({
         'DEBUG_TB_INTERCEPT_REDIRECTS': False,
@@ -42,3 +45,25 @@ else:
     file_handler = _create_file_log_handler(app.config.get('LOG_PATH'))
     app.logger.addHandler(file_handler)
     logging.getLogger('').addHandler(file_handler)
+
+
+class UserToken(object):
+    def __init__(self, id, email):
+        self.id = id
+        self.email = email
+
+def authenticate(email, password):
+    user = User.auth_user(email, password)
+    if user:
+        return UserToken(str(user.id), user.email)
+
+def identity(payload):
+    user_id = payload['identity']
+    user = User.objects(id=user_id).first()
+    if user:
+        return UserToken(str(user.pk), user.email)
+
+app.config['JWT_AUTH_USERNAME_KEY'] = 'email'
+app.config['JWT_EXPIRATION_DELTA'] = timedelta(seconds=3600)
+
+jwt = JWT(app, authenticate, identity)
