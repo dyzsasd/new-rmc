@@ -1,7 +1,8 @@
-angular.module('RmcUI.courseslist', ['ngResource'])
+angular.module('RmcUI.courseslist', ['ngResource', 'RmcUtils'])
 
-  .controller('CourseslistCtrl', ['$scope', '$routeParams', '$timeout', 'SearchClient',
-    function ($scope, $routeParams, $timeout, SearchClient) {
+  .controller('CourseslistCtrl', [
+    '$scope', '$routeParams', '$timeout', 'SearchClient', 'CurrentUser',
+    function ($scope, $routeParams, $timeout, SearchClient, CurrentUser) {
       $scope.courseCollection = [];
       var hasMore = true;
       $scope.query = $routeParams.query || '';
@@ -16,8 +17,8 @@ angular.module('RmcUI.courseslist', ['ngResource'])
       function updateCourse(courses) {
         angular.forEach(courses, function (course) {
           course.showDetail = false;
-          $scope.courseCollection.push(course);
         });
+        $scope.courseCollection = $scope.courseCollection.concat(courses);
       }
 
       function updateCourses(offset) {
@@ -58,6 +59,14 @@ angular.module('RmcUI.courseslist', ['ngResource'])
       $scope.loadMore = function () {
         updateCourses($scope.courseCollection.length);
       };
+
+      $scope.currentUser = CurrentUser.user;
+
+      $scope.$watch(CurrentUser.user, function (newVal) {
+        $scope.currentUser = newVal;
+        console.log($scope.currentUser)
+      });
+
     }])
 
   .factory('SearchClient', ['$resource', function ($resource) {
@@ -68,6 +77,7 @@ angular.module('RmcUI.courseslist', ['ngResource'])
         find: {method: 'GET', isArray: false}
       }
     )}])
+
   .filter('RatingLabel', [function () {
     return function (rating) {
       if (rating.count === 0)

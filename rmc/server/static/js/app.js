@@ -48,8 +48,8 @@ angular.module('RmcUI', [
 }])
 
 .controller('NavCtrl', ['$scope', '$http', '$location', '$route',
-  '$modal', '$window', 'UserClient', 'CurrentUser',
-  function ($scope, $http, $location, $route, $modal, $window, UserClient, CurrentUser) {
+  '$modal', '$window', 'UserClient', 'CurrentUser', 'FBAuth',
+  function ($scope, $http, $location, $route, $modal, $window, UserClient, CurrentUser, FBAuth) {
 
   $scope.isAuthenticated = false;
 
@@ -98,6 +98,9 @@ angular.module('RmcUI', [
                   scope.error_message = err.data.description;
               })
           }
+          scope.fbLogin = function () {
+            FBAuth.login();
+          }
         }]
     });
   };
@@ -137,10 +140,30 @@ angular.module('RmcUI', [
               }
             )
           };
+
         }]
     });
   };
 
+}])
+
+.factory('FBAuth', ['$window', function ($window) {
+  var fbApi = {}
+  $window.FB.init({
+    appId      : '119055615212269',
+    cookie     : true,
+    xfbml      : true,
+    status     : true,
+    version    : 'v2.5'
+  });
+
+  fbApi.login = function () {
+    $window.FB.api('/me', function(response) {
+      console.log('Successful login for: ' + response.name);
+      console.log(response)
+    })
+  };
+  return fbApi;
 }])
 
 .factory('UserClient', ['$resource', function ($resource) {

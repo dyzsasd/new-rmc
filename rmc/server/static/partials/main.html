@@ -8,6 +8,7 @@
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
     <title>Top Knowledge</title>
     <!-- Bootstrap -->
+    <link href="/static/css/bootstrap-social.css" rel="stylesheet">
     <link href="/static/css/bootstrap.min.css" rel="stylesheet">
     <link href="/static/css/main.css" rel="stylesheet">
     <!--font awesome -->
@@ -103,6 +104,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.5/angular-route.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.5/angular-sanitize.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bower-angular-translate/2.0.1/angular-translate.min.js"></script>
+    <script src='https://connect.facebook.net/en_US/sdk.js' id="facebook-jssdk"></script>
 
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="/static/js/ext/bootstrap.min.js"></script>
@@ -136,6 +138,13 @@
                   </p>
               </div>
               <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+          </form>
+          <form class="form-signin">
+              <div class="row-fluid">
+                  <a class="btn btn-block btn-social btn-lg btn-facebook" ng-click="fbLogin()">
+                      <i class="fa fa-facebook"></i>Sign in with Facebook
+                  </a>
+              </div>
           </form>
       </div>
     </script>
