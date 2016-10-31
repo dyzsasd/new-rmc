@@ -1,11 +1,16 @@
 from datetime import datetime
 
+import bson
 import flask
+import werkzeug.exceptions as exceptions
+from werkzeug.local import LocalProxy
 
 from rmc import settings as rmc_settings
+from rmc.common import facebook
 import rmc.common.rmclogger as rmclogger
 from rmc.models import User
 from rmc.server.app import app
+from rmc.server.app import UserToken
 import rmc.server.api.v1 as api_v1
 from rmc.server.api import comment as comment_api
 from rmc.server.api import course as course_api
@@ -15,6 +20,8 @@ from rmc.server.api import user as user_api
 import rmc.server.view_helpers as view_helpers
 from rmc.server.utils import parse_token
 
+
+_jwt = LocalProxy(lambda: app.extensions['jwt'])
 
 app.register_blueprint(api_v1.api)
 app.register_blueprint(course_api.api)
@@ -37,6 +44,72 @@ def sign_up():
         user['first_name'], user['last_name'],
         user['email'], user['password'])
     return str(new_user.to_dict())
+
+
+@app.route('/login/facebook', methods=['POST'])
+def login_with_facebook():
+    req = flask.request
+
+    fbsr = req.form.get('fb_signed_request')
+
+    if (fbsr is None):
+        raise exceptions.ImATeapot('No fbsr set')
+
+    fb_data = facebook.get_fb_data(fbsr, app.config)
+    fbid = fb_data['fbid']
+    fb_access_token = fb_data['access_token']
+    fb_access_token_expiry_date = fb_data['expires_on']
+    is_invalid = fb_data['is_invalid']
+
+    user = User.objects(fbid=fbid).first()
+    if user:
+        # Existing user. Update with their latest Facebook info
+        user.fb_access_token = fb_access_token
+        user.fb_access_token_expiry_date = fb_access_token_expiry_date
+        user.fb_access_token_invalid = is_invalid
+        user.save()
+    else:
+        # New user, or existing email logins user.
+        now = datetime.now()
+        email = req.form.get('email')
+        user_data = {
+            'fb_access_token': fb_access_token,
+            'fb_access_token_expiry_date': fb_access_token_expiry_date,
+            'fbid': fbid,
+            'friend_fbids': flask.json.loads(req.form.get('friend_fbids')),
+            'gender': req.form.get('gender'),
+            'last_visited': now,
+        }
+
+        user = User.objects(email=email).first() if email else None
+        if user:
+            for k, v in user_data.iteritems():
+                user[k] = v
+            user.save()
+        else:
+            # Create an account with their Facebook data
+            user_data.update({
+                'email': email,
+                'first_name': req.form.get('first_name'),
+                'join_date': now,
+                'join_source': m.User.JoinSource.FACEBOOK,
+                'last_name': req.form.get('last_name'),
+                'middle_name': req.form.get('middle_name'),
+            })
+
+            referrer_id = req.form.get('referrer_id')
+            if referrer_id:
+                try:
+                    user_data['referrer_id'] = bson.ObjectId(referrer_id)
+                except bson.errors.InvalidId:
+                    pass
+
+            user = m.User(**user_data)
+            user.save()
+    if user:
+        identity = UserToken(str(user.pk), user.email or '')
+        access_token = _jwt.jwt_encode_callback(identity)
+
 
 
 @app.route('/')

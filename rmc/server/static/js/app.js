@@ -100,7 +100,9 @@ angular.module('RmcUI', [
           }
           scope.fbLogin = function () {
             FBAuth.login().then(function (params) {
-              console.log(params)
+              return $http.post('/login/facebook', params);
+            }).then(function (response) {
+              console.log(response)
             });
           }
         }]
