@@ -36,9 +36,9 @@ def code_for_token(code, config, cmd_line_debug=False):
     """
     # Since we're exchanging a client-side token, redirect_uri should be ''
     params = {
-        'client_id': config['FB_APP_ID'],
+        'client_id': rmc_settings.fb_app_id,
         'redirect_uri': '',
-        'client_secret': config['FB_APP_SECRET'],
+        'client_secret': rmc_settings.fb_app_secret,
         'code': code,
     }
     resp = requests.get('https://graph.facebook.com/oauth/access_token',
@@ -106,8 +106,8 @@ def token_for_long_token(short_token, config, cmd_line_debug=False):
     # Since we're exchanging a client-side token, redirect_uri should be ''
     params = {
         'grant_type': 'fb_exchange_token',
-        'client_id': config['FB_APP_ID'],
-        'client_secret': config['FB_APP_SECRET'],
+        'client_id': rmc_settings.fb_app_id,
+        'client_secret': rmc_settings.fb_app_secret,
         'fb_exchange_token': short_token,
     }
     resp = requests.get('https://graph.facebook.com/oauth/access_token',
@@ -175,7 +175,7 @@ def get_fb_data(signed_request, config):
     }
     """
     # Validate against Facebook's signed request
-    fbsr_data = parse_signed_request(signed_request, config['FB_APP_SECRET'])
+    fbsr_data = parse_signed_request(signed_request, rmc_settings.fb_app_secret)
 
     # TODO(Sandy): Maybe move the validation somewhere else since it can raise
     # an Exception

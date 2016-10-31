@@ -6,7 +6,7 @@ import werkzeug.exceptions as exceptions
 from werkzeug.local import LocalProxy
 
 from rmc import settings as rmc_settings
-from rmc.common import facebook
+from rmc.common import facebook, util
 import rmc.common.rmclogger as rmclogger
 from rmc.models import User
 from rmc.server.app import app
@@ -48,9 +48,9 @@ def sign_up():
 
 @app.route('/login/facebook', methods=['POST'])
 def login_with_facebook():
-    req = flask.request
+    req_json = flask.request.get_json()
 
-    fbsr = req.form.get('fb_signed_request')
+    fbsr = req_json.get('fb_signed_request')
 
     if (fbsr is None):
         raise exceptions.ImATeapot('No fbsr set')
@@ -71,13 +71,13 @@ def login_with_facebook():
     else:
         # New user, or existing email logins user.
         now = datetime.now()
-        email = req.form.get('email')
+        email = req_json.get('email')
         user_data = {
             'fb_access_token': fb_access_token,
             'fb_access_token_expiry_date': fb_access_token_expiry_date,
             'fbid': fbid,
-            'friend_fbids': flask.json.loads(req.form.get('friend_fbids')),
-            'gender': req.form.get('gender'),
+            'friend_fbids': flask.json.loads(req_json.get('friend_fbids')),
+            'gender': req_json.get('gender'),
             'last_visited': now,
         }
 
@@ -90,26 +90,28 @@ def login_with_facebook():
             # Create an account with their Facebook data
             user_data.update({
                 'email': email,
-                'first_name': req.form.get('first_name'),
+                'first_name': req_json.get('first_name'),
                 'join_date': now,
-                'join_source': m.User.JoinSource.FACEBOOK,
-                'last_name': req.form.get('last_name'),
-                'middle_name': req.form.get('middle_name'),
+                'join_source': User.JoinSource.FACEBOOK,
+                'last_name': req_json.get('last_name'),
+                'middle_name': req_json.get('middle_name'),
             })
 
-            referrer_id = req.form.get('referrer_id')
+            referrer_id = req_json.get('referrer_id')
             if referrer_id:
                 try:
                     user_data['referrer_id'] = bson.ObjectId(referrer_id)
                 except bson.errors.InvalidId:
                     pass
 
-            user = m.User(**user_data)
+            user = User(**user_data)
             user.save()
     if user:
         identity = UserToken(str(user.pk), user.email or '')
         access_token = _jwt.jwt_encode_callback(identity)
-
+        return util.json_dumps({
+            'accessToken': access_token
+        })
 
 
 @app.route('/')

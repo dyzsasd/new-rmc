@@ -102,14 +102,13 @@ angular.module('RmcUI', [
             FBAuth.login().then(function (params) {
               return $http.post('/login/facebook', params);
             }).then(function (response) {
-              console.log(response)
+              $window.localStorage.setItem('accessToken', response.data.accessToken);
+              $window.location.reload(); 
             });
           }
         }]
     });
   };
-
-  $scope.login()
 
   $scope.registration = function () {
     $modal.open({
