@@ -6,11 +6,12 @@ echo $ROOT
 
 PYTHONPATH="$ROOT/..:$PYTHONPATH" \
   uwsgi \
-    --http-socket 0.0.0.0:6000 \
+    --socket $ROOT/../uwsgi.sock \
+    --chmod-socket=666 \
     --wsgi-file $ROOT/rmc/server/server.wsgi \
     --callable app \
-	--master \
-    --workers 4 \
+    --master \
+    --workers 8 \
     --close-on-exec \
     --enable-threads \
     --virtualenv $ROOT/env \

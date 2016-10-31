@@ -99,11 +99,15 @@ angular.module('RmcUI', [
               })
           }
           scope.fbLogin = function () {
-            FBAuth.login();
+            FBAuth.login().then(function (params) {
+              console.log(params)
+            });
           }
         }]
     });
   };
+
+  $scope.login()
 
   $scope.registration = function () {
     $modal.open({
@@ -147,21 +151,60 @@ angular.module('RmcUI', [
 
 }])
 
-.factory('FBAuth', ['$window', function ($window) {
+.factory('FBAuth', ['$q', '$window', function ($q, $window) {
   var fbApi = {}
   $window.FB.init({
-    appId      : '119055615212269',
+    appId      : '1859295840956010',
     cookie     : true,
     xfbml      : true,
-    status     : true,
     version    : 'v2.5'
   });
 
   fbApi.login = function () {
-    $window.FB.api('/me', function(response) {
-      console.log('Successful login for: ' + response.name);
-      console.log(response)
-    })
+    var defer = $q.defer();
+    var deferredFriends = $q.defer();
+    var deferredMe = $q.defer();
+    $window.FB.login(function(response) {
+      if (response.status !== 'connected') {
+        defer.reject('no connected')
+      }
+
+      var authResponse = response.authResponse;
+
+      FB.api('/me/friends', function(response) {
+        var friends = [];
+        angular.forEach(response.data, function (friend) {
+          friends.push(friend.id);
+        });
+        deferredFriends.resolve(friends);
+      });
+
+      var meFields = [
+        'first_name',
+        'last_name',
+        'middle_name',
+        'email',
+        'gender'
+      ]
+      FB.api('/me', {fields: meFields}, function(response) {
+        deferredMe.resolve(response);
+      });
+
+    });
+    $q.all([deferredMe.promise, deferredFriends.promise]).then(function (values) {
+      var me = values[0];
+      var friendFbids = values[1]
+      var params = {
+        'friend_fbids': JSON.stringify(friendFbids),
+        'first_name': me.first_name,
+        'middle_name': me.middle_name,
+        'last_name': me.last_name,
+        'email': me.email,
+        'gender': me.gender
+      };
+      defer.resolve(params);
+    });
+    return defer.promise;
   };
   return fbApi;
 }])
