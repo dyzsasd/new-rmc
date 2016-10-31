@@ -162,14 +162,15 @@ angular.module('RmcUI', [
 
   fbApi.login = function () {
     var defer = $q.defer();
+    var deferredAuth= $q.defer();
     var deferredFriends = $q.defer();
     var deferredMe = $q.defer();
     $window.FB.login(function(response) {
       if (response.status !== 'connected') {
-        defer.reject('no connected')
+        defer.reject('no connected');
       }
 
-      var authResponse = response.authResponse;
+      deferredAuth.resolve(response.authResponse);
 
       FB.api('/me/friends', function(response) {
         var friends = [];
@@ -185,24 +186,27 @@ angular.module('RmcUI', [
         'middle_name',
         'email',
         'gender'
-      ]
+      ];
       FB.api('/me', {fields: meFields}, function(response) {
         deferredMe.resolve(response);
       });
 
     });
-    $q.all([deferredMe.promise, deferredFriends.promise]).then(function (values) {
-      var me = values[0];
-      var friendFbids = values[1]
-      var params = {
-        'friend_fbids': JSON.stringify(friendFbids),
-        'first_name': me.first_name,
-        'middle_name': me.middle_name,
-        'last_name': me.last_name,
-        'email': me.email,
-        'gender': me.gender
-      };
-      defer.resolve(params);
+    $q.all([deferredMe.promise, deferredFriends.promise, deferredAuth.promise])
+      .then(function (values) {
+        var me = values[0];
+        var friendFbids = values[1];
+        var authResp = values[2];
+        var params = {
+          'fb_signed_request': authResp.signedRequest,
+          'friend_fbids': JSON.stringify(friendFbids),
+          'first_name': me.first_name,
+          'middle_name': me.middle_name,
+          'last_name': me.last_name,
+          'email': me.email,
+          'gender': me.gender
+        };
+        defer.resolve(params);
     });
     return defer.promise;
   };
