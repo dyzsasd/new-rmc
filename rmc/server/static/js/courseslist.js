@@ -1,8 +1,8 @@
 angular.module('RmcUI.courseslist', ['ngResource', 'RmcUtils'])
 
   .controller('CourseslistCtrl', [
-    '$scope', '$routeParams', '$timeout', 'SearchClient', 'CurrentUser',
-    function ($scope, $routeParams, $timeout, SearchClient, CurrentUser) {
+    '$scope', '$rootScope', '$routeParams', '$timeout', 'SearchClient', 'CurrentUser',
+    function ($scope, $rootScope, $routeParams, $timeout, SearchClient, CurrentUser) {
       $scope.courseCollection = [];
       var hasMore = true;
       $scope.query = $routeParams.query || '';
@@ -60,12 +60,14 @@ angular.module('RmcUI.courseslist', ['ngResource', 'RmcUtils'])
         updateCourses($scope.courseCollection.length);
       };
 
-      $scope.currentUser = CurrentUser.user;
+      $scope.currentUser = {};
 
-      $scope.$watch(CurrentUser.user, function (newVal) {
-        $scope.currentUser = newVal;
-        console.log($scope.currentUser)
-      });
+      $scope.$watch(function () {
+        return $rootScope.currentUser;
+      }, function (newVal) {
+        if (newVal)
+          $scope.currentUser = newVal;
+      }, true);
 
     }])
 

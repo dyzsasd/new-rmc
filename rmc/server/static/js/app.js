@@ -47,19 +47,19 @@ angular.module('RmcUI', [
   $routeProvider.otherwise({redirectTo: '/'});
 }])
 
-.controller('NavCtrl', ['$scope', '$http', '$location', '$route',
+.controller('NavCtrl', ['$scope', '$rootScope', '$http', '$location', '$route',
   '$modal', '$window', 'UserClient', 'CurrentUser', 'FBAuth',
-  function ($scope, $http, $location, $route, $modal, $window, UserClient, CurrentUser, FBAuth) {
+  function ($scope, $rootScope, $http, $location, $route, $modal, $window, UserClient, CurrentUser, FBAuth) {
 
   $scope.isAuthenticated = false;
 
   UserClient.current_user({}).$promise.then(function (response) {
     if (response.status_code !== 401) {
-      CurrentUser['user'] = response;
+      $rootScope.currentUser = response;
       $scope.isAuthenticated = true;
     } else {
       $scope.isAuthenticated = false;
-      CurrentUser['user'] = undefined;
+      $rootScope.currentUser = undefined;
     }
   });
 
