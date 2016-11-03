@@ -53,8 +53,8 @@ angular.module('RmcUI', [
 
   $scope.isAuthenticated = false;
 
-  UserClient.current_user({}).$promise.then(function (response) {
-    if (response.status_code !== 401) {
+  UserClient.current_user().$promise.then(function (response) {
+    if (response.id !== undefined) {
       $rootScope.currentUser = response;
       $scope.isAuthenticated = true;
     } else {
@@ -216,7 +216,7 @@ angular.module('RmcUI', [
 
 .factory('UserClient', ['$resource', function ($resource) {
   return $resource (
-      'api/user/current_user/',
+      '/api/user/current_user/',
       {},
       {
         current_user: {method: 'GET', isArray: false}

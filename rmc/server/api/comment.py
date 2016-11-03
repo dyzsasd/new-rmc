@@ -1,6 +1,8 @@
 import json
 
 import flask
+from flask_jwt import jwt_required, current_identity
+
 import rmc.common.util as util
 import rmc.models as m
 import rmc.server.view_helpers as view_helpers
@@ -9,17 +11,45 @@ import rmc.server.view_helpers as view_helpers
 api = flask.Blueprint('comment_api', __name__, url_prefix='/api/comment')
 
 
-@api.route('/', methods=['get'])
+@api.route('/save', methods=['PUT'])
+@jwt_required()
+def save():
+    comment = util.json_loads(flask.request.data)
+    current_user_id = current_identity.id
+    print comment, current_user_id
+    if 'course_id' not in comment or 'course_id' not in comment:
+        return flask.abort(400)
+    if str(comment['user_id']) != current_user_id:
+        return flask.abort(400)
+    comment_obj = None
+    if 'id' in comment:
+        comment_obj = m.CourseComment.objects(id=comment['id']).first()
+    if comment_obj is None:
+        comment_obj = m.CourseComment(
+            course_id=comment['course_id'],
+            user_id=comment['user_id']
+        )
+
+    comment_obj.update_by_dict(comment)
+    comment_obj.save()
+
+    saved_comment_obj = comment_obj.to_mongo()
+
+    if '_id' in saved_comment_obj:
+        saved_comment_obj['id'] = str(saved_comment_obj['_id'])
+
+    return util.json_dumps(saved_comment_obj)
+
+@api.route('/get/', methods=['get'])
+@jwt_required()
 def get_or_create():
     course_id = flask.request.args.get('course_id')
     if not course_id:
         return flask.abort(400)
-    current_user = view_helpers.get_current_user()
-    if not current_user:
-        return flask.abort(404)
-    comment = m.CourseComment.objects(course_id=course_id, user_id=current_user.id).first()
+    current_user_id = current_identity.id
+    comment = m.CourseComment.objects(course_id=course_id, user_id=current_user_id).first()
     if not comment:
-        comment = m.CourseComment(user_id=current_user.id, course_id=course_id)
+        comment = m.CourseComment(user_id=current_user_id, course_id=course_id)
     comment_dict = comment.to_mongo()
     if '_id' in comment_dict:
         comment_dict['id'] = str(comment_dict['_id'])
@@ -33,10 +63,9 @@ def get_comments():
         return flask.abort(400)
     start = int(flask.request.args.get('start') or 0)
     rows = int(flask.request.args.get('rows') or 100)
-    current_user = view_helpers.get_current_user()
     comments = [
         comment.to_mongo() for comment in
-        m.CourseComment.get_course_comments(course_id, current_user.friend_ids, start, rows)
+        m.CourseComment.get_course_comments(course_id, None, start, rows)
     ]
     for comment in comments:
         comment['id'] = str(comment['_id'])
@@ -54,17 +83,16 @@ def get_count():
     comments = m.CourseComment.get_course_comments(course_id, current_user.friend_ids, 0, 10000)
     return util.json_dumps(len(comments))
 
-@api.route('/prof/', methods=['get'])
+@api.route('/prof/get/', methods=['get'])
+@jwt_required()
 def get_prof_comment():
     course_id = flask.request.args.get('course_id')
     if not course_id:
         return flask.abort(400)
-    current_user = view_helpers.get_current_user()
-    if not current_user:
-        return flask.abort(404)
-    comment = m.CourseProfessorComment.objects(course_id=course_id, user_id=current_user.id).first()
+    current_user_id = current_identity.id
+    comment = m.CourseProfessorComment.objects(course_id=course_id, user_id=current_user_id).first()
     if not comment:
-        comment = m.CourseProfessorComment(user_id=current_user.id, course_id=course_id)
+        comment = m.CourseProfessorComment(user_id=current_user_id, course_id=course_id)
     comment_dict = comment.to_mongo()
     if '_id' in comment_dict:
         comment_dict['id'] = str(comment_dict['_id'])

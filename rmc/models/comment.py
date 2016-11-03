@@ -25,7 +25,7 @@ class BaseComment(me.Document):
     shared_at = me.DateTimeField()
     rating_updated_at = me.DateTimeField()
     privacy = me.IntField(
-        choices=_PRIVACY_LEVELS.values(), default=_PRIVACY_LEVELS['friends'])
+        choices=_PRIVACY_LEVELS.values(), default=_PRIVACY_LEVELS['everyone'])
     num_voted_helpful = me.IntField(default=0)
     num_voted_not_helpful = me.IntField(default=0)
 
