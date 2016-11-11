@@ -7,7 +7,8 @@ angular.module('RmcUI', [
   'RmcUI.course-overview',
   'RmcUI.courseslist',
   'RmcUI.index',
-  'RmcUtils'
+  'RmcUtils',
+  'vjs.video'
 ])
 
 .config(['$animateProvider', function ($animateProvider) {

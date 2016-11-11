@@ -17,6 +17,7 @@ from rmc.server.api import course as course_api
 from rmc.server.api import prof as prof_api
 from rmc.server.api import schedule as schedule_api
 from rmc.server.api import user as user_api
+from rmc.server.api import user_course as user_course_api
 import rmc.server.view_helpers as view_helpers
 from rmc.server.utils import parse_token
 
@@ -29,6 +30,7 @@ app.register_blueprint(comment_api.api)
 app.register_blueprint(prof_api.api)
 app.register_blueprint(schedule_api.api)
 app.register_blueprint(user_api.api)
+app.register_blueprint(user_course_api.api)
 
 #app.register_blueprint(course_view.view)
 #app.register_blueprint(professor_view.view)

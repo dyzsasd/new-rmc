@@ -50,7 +50,7 @@ angular.module('RmcUI.course-overview', [])
             $scope.courseProfComment.passion = 2.5
           else
             $scope.courseProfComment.passion = $scope.courseProfComment.passion * 5
-          return Prof.getProfs({'prof_id[]': $scope.course.professor_ids}).$promise
+          return Prof.getProfs({'prof_id': $scope.course.professor_ids}).$promise
         })
         .then(function (response) {
           console.log('profs: ', response)

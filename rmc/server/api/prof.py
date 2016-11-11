@@ -21,9 +21,11 @@ def get_prof(prof_id):
 @api.route('/collection/', methods=['GET'])
 def get_profs():
     prof_ids = flask.request.args.getlist('prof_id')
+    print flask.request.args
     profs = [
         prof.to_dict()
         for prof in m.Professor.objects(id__in=prof_ids)
     ]
+    print len(profs)
     return util.json_dumps(profs)
 
