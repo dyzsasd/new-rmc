@@ -18,7 +18,7 @@ case "$COMMAND" in
         echo "Starting remote flask server"
         RMC_LOG_DIR="$ROOT/logs" \
         PYTHONPATH="$ROOT/../" uwsgi \
-          --http 0.0.0.0:5000 \
+          --http-socket 0.0.0.0:5000 \
           --wsgi-file $ROOT/rmc/server/server.wsgi \
           --callable app \
           --master \
