@@ -1,8 +1,8 @@
 angular.module('RmcUI.course-overview', [])
 
   .controller('CourseOverviewCtrl', [
-    '$scope', '$modal', '$routeParams', 'Course', 'Comment', 'ProfComment', 'Prof',
-    function ($scope, $modal, $routeParams, Course, Comment, ProfComment, Prof) {
+    '$scope', '$rootScope', '$modal', '$routeParams', 'Course', 'Comment', 'ProfComment', 'Prof',
+    function ($scope, $rootScope, $modal, $routeParams, Course, Comment, ProfComment, Prof) {
 
       $scope.addingReview = false;
 
@@ -73,38 +73,59 @@ angular.module('RmcUI.course-overview', [])
 
       loadComments();
 
-      $scope.openAddReview = function (runId) {
-        $modal.open({
-          animation: true,
-          templateUrl: '/course/add_review.html',
-          windowClass: 'center-modal',
-          size: 'lg',
-          resolve: {
-            courseComment: function () {
-              return $scope.courseComment;
-            },
-            courseProfComment: function () {
-              return $scope.courseProfComment;
-            },
-            profs: function () {
-              return $scope.profs;
-            }
-          },
-          controller: [
-            '$scope', 'courseComment', 'courseProfComment', 'profs',
-            function (scope, courseComment, courseProfComment, profs) {
-              scope.courseComment = courseComment;
-              scope.courseProfComment = courseProfComment;
-              scope.profs = profs;
-              scope.addReview = function (courseComment, courseProfComment) {
-                var message = angular.copy(courseComment);
-                message.interest = courseComment.interest / 5;
-                message.usefulness = courseComment.usefulness / 5;
-                message.easiness = courseComment.easiness / 5;
-                Comment.saveComment(message);
+      $scope.currentUser = {};
+      $scope.isLogin = $scope.currentUser.hasOwnProperty('name');
+
+      $scope.$watch(function () {
+        return $rootScope.currentUser;
+      }, function (newVal) {
+        if (newVal)
+          $scope.currentUser = newVal;
+          $scope.isLogin = $scope.currentUser.hasOwnProperty('name');
+      }, true);
+
+      $scope.openAddReview = function () {
+        if ($scope.isLogin) {
+          $modal.open({
+            animation: true,
+            templateUrl: '/course/add_review.html',
+            windowClass: 'center-modal',
+            size: 'lg',
+            resolve: {
+              courseComment: function () {
+                return $scope.courseComment;
+              },
+              courseProfComment: function () {
+                return $scope.courseProfComment;
+              },
+              profs: function () {
+                return $scope.profs;
               }
-            }]
-        });
+            },
+            controller: [
+              '$scope', 'courseComment', 'courseProfComment', 'profs',
+              function (scope, courseComment, courseProfComment, profs) {
+                scope.courseComment = courseComment;
+                scope.courseProfComment = courseProfComment;
+                scope.profs = profs;
+                scope.addReview = function (courseComment, courseProfComment) {
+                  var message = angular.copy(courseComment);
+                  message.interest = courseComment.interest / 5;
+                  message.usefulness = courseComment.usefulness / 5;
+                  message.easiness = courseComment.easiness / 5;
+                  Comment.saveComment(message);
+                }
+              }]
+          });
+        } else {
+          $modal.open({
+            animation: true,
+            templateUrl: '/needLogin.html',
+            windowClass: 'center-modal',
+            size: 'sm',
+          });
+        }
+
       };
 
     }])

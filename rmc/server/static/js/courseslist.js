@@ -61,12 +61,14 @@ angular.module('RmcUI.courseslist', ['ngResource', 'RmcUtils'])
       };
 
       $scope.currentUser = {};
+      $scope.isLogin = $scope.currentUser.hasOwnProperty('name');
 
       $scope.$watch(function () {
         return $rootScope.currentUser;
       }, function (newVal) {
         if (newVal)
           $scope.currentUser = newVal;
+          $scope.isLogin = $scope.currentUser.hasOwnProperty('name');
       }, true);
 
     }])

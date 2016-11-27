@@ -4,10 +4,13 @@
         <div class="col-sm-3 text-center">
           <div class="instructor-info">
             <h2 class="text-left">Information</h2>
-            <div class="background">
-              <div id="instructor-photo"> <img src="{{ currentUser.profile_pic_urls.large }}" width="90px" height="90x" class="img-circle">
+            <div ng-show="!isLogin">
+              <span>Please login for more information</span>
+            </div>
+            <div class="background" ng-show="isLogin">
+              <div id="instructor-photo">
+                <img src="{{ currentUser.profile_pic_urls.large }}" width="90px" height="90x" class="img-circle">
                 <h3>{{ currentUser.name }}</h3>
-                <p><i class="fa fa-database" aria-hidden="true" ng-show="false"></i> 3862 points</p>
               </div>
               <div class="names-list">
                 <!--<ul>
@@ -18,11 +21,11 @@
                   <li><img src="images/team2.jpg" width="30px" height="30px" class="img-circle"> Serge D'Alessio </li>
                   <li><img src="images/team2.jpg" width="30px" height="30px" class="img-circle"> Serge D'Alessio </li>
                 </ul>-->
-                <div id="invite-button">
+                <!--<div id="invite-button">
                   <button class="btn btn-default">Invite Friends</button>
                   <p>Invite friends to send
                     <br>200 points</p>
-                </div>
+                </div>-->
               </div>
             </div>
           </div>
