@@ -11,20 +11,22 @@ api = flask.Blueprint('user_course_api', __name__, url_prefix='/api/user_course'
 
 
 class VideoClient(object):
-    endpoint = 'https://api.video.tkcourse.com/'
+    endpoint = 'https://api.video.tkcourse.com'
 
     def _parse_course_id(self, course_id):
-        subject = course_id[:3]
-        catalog = course_id[4:7]
+        subject = course_id[:3].upper()
+        catalog = course_id[3:6]
         return (subject, catalog)
 
     def get_course_videos(self, course_id):
         subject, catalog = self._parse_course_id(course_id)
-        print requests.get(self.endpoint + '/video/meta/list/%s/%s' % (subject, catalog)).json
+        print self.endpoint + '/video/meta/list/%s/%s' % (subject, catalog)
         return requests.get(self.endpoint + '/video/meta/list/%s/%s' % (subject, catalog)).json
 
     def get_video(self, video_id):
-        return requests.get(self.endpoint + '/video/meta/%s?access=%s' % (video_id, VIDEO_TOKEN)).json
+        meta = requests.get(self.endpoint + '/video/meta/%s?access=%s' % (video_id, VIDEO_TOKEN)).json
+        meta['url'] = 'http://cdn.video.TKcourse.com' + meta['videoUrl']
+        return meta
 
 
 _video_client = VideoClient()
@@ -39,8 +41,12 @@ def get_courses_video(course_id):
         ucs = m.UserCourse(course_id=course_id, user_id=current_identity.id)
         ucs.save()
     videos = _video_client.get_course_videos(course_id)
+    print videos
     video_metas = [
-        _video_client.get_video(video.id) for video in videos
+        _video_client.get_video(video['id']) for video in videos
     ]
+
+    for video_meta in video_metas:
+        video_meta['videoUrl'] = video_meta['videoUrl']
 
     return util.json_dumps(video_metas)

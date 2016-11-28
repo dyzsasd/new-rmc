@@ -18,7 +18,6 @@ angular.module('RmcUI.course', [
 
     Course.get({course_id: course_id}).$promise
       .then(function (response) {
-        console.log('course:', response)
         $scope.course = response;
         return Prof.getProfs({'prof_id': $scope.course.professor_ids}).$promise
       })
@@ -30,32 +29,7 @@ angular.module('RmcUI.course', [
     UserCourse.getVideos({id: course_id}).$promise
       .then(function (response) {
         $scope.videos = response;
-        $scope.videos = [
-          {
-           "id": "a12ab51b04344ce1bccd0d428d6e2c0d",
-           "catalog": "351",
-           "subject": "ECE",
-           "title": "Compiler-1",
-           "description": "Compiler",
-           "version": "0",
-           "isLatest": "true",
-           "seq": "0",
-           "url": "http://html5videoformatconverter.com/data/images/happyfit2.mp4",
-           "dateModified": "1472988819749"
-          },
-          {
-           "id": "a12ab51b04344ce1bccd0d428d6e2c0d",
-           "catalog": "351",
-           "subject": "ECE",
-           "title": "Compiler-2",
-           "description": "Compiler",
-           "version": "0",
-           "isLatest": "true",
-           "seq": "0",
-           "url": "http://static.videogular.com/assets/videos/videogular.mp4",
-           "dateModified": "1472988819749"
-          }
-        ]
+        console.log(response)
         $scope.mediaToggle = {
           sources: [
             {
