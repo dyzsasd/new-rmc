@@ -41,16 +41,30 @@ angular.module('RmcUI.course', [
         };
       });
 
-    $scope.change_video = function (url) {
+    $scope.change_video = function (video) {
       $scope.mediaToggle = {
         sources: [
           {
-            src: url,
+            src: "",
             type: 'video/mp4'
           },
         ],
         poster: 'images/screen.jpg'
       }
+
+      UserCourse.getVideoStream({id: course_id, _tk: video.id}).$promise
+        .then(function (response) {
+          console.log(response);
+          $scope.mediaToggle = {
+            sources: [
+              {
+                src: response.url,
+                type: 'video/mp4'
+              },
+            ],
+            poster: 'images/screen.jpg'
+          }
+        });
     };
 
 
@@ -70,7 +84,8 @@ angular.module('RmcUI.course', [
       '/api/user_course/:id/:handle/',
       {},
       {
-        getVideos: {method: 'GET', isArray: true, params: {handle: 'video'}}
+        getVideos: {method: 'GET', isArray: true, params: {handle: 'video'}},
+        getVideoStream: {method: 'GET', isArray: false, params: {handle: 'stream'}}
       }
   )}])
 

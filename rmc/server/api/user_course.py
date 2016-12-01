@@ -6,6 +6,8 @@ import rmc.common.util as util
 import rmc.models as m
 from rmc.settings import VIDEO_TOKEN
 
+from datetime import datetime
+
 
 api = flask.Blueprint('user_course_api', __name__, url_prefix='/api/user_course')
 
@@ -24,9 +26,21 @@ class VideoClient(object):
         return requests.get(self.endpoint + '/video/meta/list/%s/%s' % (subject, catalog)).json
 
     def get_video(self, video_id):
-        meta = requests.get(self.endpoint + '/video/meta/%s?access=%s' % (video_id, VIDEO_TOKEN)).json
-        meta['url'] = 'http://cdn.video.TKcourse.com' + meta['videoUrl']
+        meta = requests.get(self.endpoint + '/video/meta/%s' % video_id).json
         return meta
+
+    def get_stream(self, video_id, user_id):
+        headers = {
+            "Video-Requested-At": datetime.utcnow().strftime('%a, %d %b %Y %H:%M:%S GMT'),
+            "Video-User": user_id,
+            "Video-Requested-From": '10.4.2.56',
+            "Video-Host": 'www.tkcourse.com'
+        }
+        token = requests.get(self.endpoint + '/video/stream/token/video/%s' % video_id, headers=headers).json
+        url = requests.get(self.endpoint + '/video/stream/video/%s?cdn=true' % video_id, headers={
+            "Video-Stream-Retrieve-Token": token['token']
+        }).json
+        return url
 
 
 _video_client = VideoClient()
@@ -40,13 +54,19 @@ def get_courses_video(course_id):
     if not ucs:
         ucs = m.UserCourse(course_id=course_id, user_id=current_identity.id)
         ucs.save()
-    videos = _video_client.get_course_videos(course_id)
+    videos = _video_client.get_course_videos(course_id) or [{'id': '51ba004285814a34b6df663d6acf5c0b'}]
     print videos
     video_metas = [
         _video_client.get_video(video['id']) for video in videos
     ]
 
-    for video_meta in video_metas:
-        video_meta['videoUrl'] = video_meta['videoUrl']
-
     return util.json_dumps(video_metas)
+
+@api.route('/<string:course_id>/stream', methods=['GET'])
+@jwt_required()
+def get_stream(course_id):
+    course_id = course_id.lower()
+    _tk = flask.request.args.get('_tk')
+    url = _video_client.get_stream(_tk, current_identity.id)
+    print url
+    return util.json_dumps(url)
