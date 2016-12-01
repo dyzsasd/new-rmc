@@ -22,7 +22,6 @@ class VideoClient(object):
 
     def get_course_videos(self, course_id):
         subject, catalog = self._parse_course_id(course_id)
-        print self.endpoint + '/video/meta/list/%s/%s' % (subject, catalog)
         return requests.get(self.endpoint + '/video/meta/list/%s/%s' % (subject, catalog)).json
 
     def get_video(self, video_id):
@@ -54,8 +53,9 @@ def get_courses_video(course_id):
     if not ucs:
         ucs = m.UserCourse(course_id=course_id, user_id=current_identity.id)
         ucs.save()
-    videos = _video_client.get_course_videos(course_id) or [{'id': '51ba004285814a34b6df663d6acf5c0b'}]
-    print videos
+    videos = _video_client.get_course_videos(course_id)
+    if len(videos) == 0 and course_id.startswith('eco220'):
+        videos = [{'id': '51ba004285814a34b6df663d6acf5c0b'}]
     video_metas = [
         _video_client.get_video(video['id']) for video in videos
     ]
