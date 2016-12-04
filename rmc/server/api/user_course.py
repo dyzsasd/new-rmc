@@ -54,8 +54,6 @@ def get_courses_video(course_id):
         ucs = m.UserCourse(course_id=course_id, user_id=current_identity.id)
         ucs.save()
     videos = _video_client.get_course_videos(course_id)
-    if len(videos) == 0 and course_id.startswith('eco220'):
-        videos = [{'id': '51ba004285814a34b6df663d6acf5c0b'}]
     video_metas = [
         _video_client.get_video(video['id']) for video in videos
     ]
