@@ -37,7 +37,7 @@
             </div>
           </div>
           <!-/row-->
-          <div id="counters" ng-show="false">
+          <div id="counters">
             <div class="row">
               <div class="col-sm-6">
                 <div class="row">
@@ -50,26 +50,26 @@
                       </ul>
                     </ul>
                   </div>
-                  <div class="col-xs-6 ">
+                  <div class="col-xs-6" ng-show="false">
                     <div class="pull-right"><span class="views ">22,345</span><span> Views</span></div>
                   </div>
                 </div>
               </div>
               <div class="col-sm-6">
                 <div class="row">
-                  <div class="col-xs-6"><span>Score: </span> <span id="stars-existing" class="starrr">
+                  <div class="col-xs-6" ng-show="false"><span>Score: </span> <span id="stars-existing" class="starrr">
                   </span></div>
-                  <div class="col-xs-6">
-                    <button class="btn btn-default pull-right">Trying for free !!</button>
+                  <div class="col-xs-6" ng-show="show_buy">
+                    <button class="btn btn-default pull-right">Trying for free until 15.12 !!</button>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-          <div id="intro" ng-show="false">
+          <div id="intro">
             <div class="row">
               <div class="col-xs-12">
-                <p><span>Introduction</span> ：This section: our instructor talks about design thinking and computational table management</p>
+                <p><span>Introduction: </span>{{ course.description }}</p>
               </div>
             </div>
           </div>

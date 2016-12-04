@@ -2,6 +2,7 @@ angular.module('RmcUI', [
   'ngAnimate',
   'ngCookies',
   'ngRoute',
+  'toaster',
   'ui.bootstrap',
   'RmcUI.course',
   'RmcUI.course-overview',

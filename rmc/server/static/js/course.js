@@ -3,18 +3,31 @@ angular.module('RmcUI.course', [
 ])
 
 .controller('CourseCtrl', [
-  '$scope', '$modal', '$routeParams', 'Course', 'Prof', 'UserCourse',
-  function ($scope, $modal, $routeParams, Course, Prof, UserCourse) {
+  '$scope', '$rootScope', '$modal', '$routeParams', 'Course', 'Prof', 'UserCourse', 'toaster',
+  function ($scope, $rootScope, $modal, $routeParams, Course, Prof, UserCourse, toaster) {
     var course_id = $routeParams.course_id;
 
     $scope.course = {};
     $scope.profs = [];
     $scope.videos = [];
+    $scope.has_video = false;
+    $scope.user_course = undefined;
+    $scope.show_buy = false;
     $scope.mediaToggle = {
       sources: [
       ],
       poster: 'images/screen.jpg'
     };
+
+    $scope.currentUser = {};
+    $scope.isLogin = $scope.currentUser.hasOwnProperty('name');
+    $scope.$watch(function () {
+      return $rootScope.currentUser;
+    }, function (newVal) {
+      if (newVal)
+        $scope.currentUser = newVal;
+        $scope.isLogin = $scope.currentUser.hasOwnProperty('name');
+    }, true);
 
     Course.get({course_id: course_id}).$promise
       .then(function (response) {
@@ -23,22 +36,46 @@ angular.module('RmcUI.course', [
       })
       .then(function (response) {
         $scope.profs = response;
-        console.log('profs: ', $scope.profs)
+        return UserCourse.getUserCourse({id: course_id}).$promise
       })
-
-    UserCourse.getVideos({id: course_id}).$promise
+      .then(function (response) {
+        if (response.status_code==401) {
+          toaster.pop('error', 'please login!');
+          return []
+        }
+        $scope.user_course = response
+        if ($scope.user_course == 'r') {
+          return UserCourse.getVideos({id: course_id}).$promise;
+        } else {
+          $scope.show_buy = true;
+          return []
+        }
+      })
       .then(function (response) {
         $scope.videos = response;
-        console.log(response)
-        $scope.mediaToggle = {
-          sources: [
-            {
-              src: $scope.videos[0].url,
-              type: 'video/mp4'
-            },
-          ],
-          poster: 'images/screen.jpg'
-        };
+        if ($scope.videos.length == 0) {
+          $scope.has_video = false
+          return {};
+        } else {
+          $scope.has_video = true
+          return UserCourse.getVideoStream({_tk: $scope.videos[0].id}).$promise
+        }
+      })
+      .then(function (response) {
+        if (response.url !== undefined) {
+          $scope.mediaToggle = {
+            sources: [
+              {
+                src: response.url,
+                type: 'video/mp4'
+              },
+            ],
+            poster: 'images/screen.jpg'
+          }
+        } else {
+          toaster.pop('error', 'Cannot find video url');
+        }
+
       });
 
     $scope.change_video = function (video) {
@@ -52,7 +89,7 @@ angular.module('RmcUI.course', [
         poster: 'images/screen.jpg'
       }
 
-      UserCourse.getVideoStream({id: course_id, _tk: video.id}).$promise
+      UserCourse.getVideoStream({_tk: video.id}).$promise
         .then(function (response) {
           console.log(response);
           $scope.mediaToggle = {
@@ -84,6 +121,7 @@ angular.module('RmcUI.course', [
       '/api/user_course/:id/:handle/',
       {},
       {
+        getUserCourse: {method :'GET', isArray: false, params: {handle: 'user_course'}},
         getVideos: {method: 'GET', isArray: true, params: {handle: 'video'}},
         getVideoStream: {method: 'GET', isArray: false, params: {handle: 'stream'}}
       }

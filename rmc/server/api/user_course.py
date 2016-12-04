@@ -45,6 +45,17 @@ class VideoClient(object):
 _video_client = VideoClient()
 
 
+@api.route('/<string:course_id>/user_course', methods=['GET'])
+@jwt_required()
+def get_user_course(course_id):
+    course_id = course_id.lower()
+    ucs = m.UserCourse.objects(course_id=course_id, user_id=current_identity.id).first()
+    if not ucs:
+        ucs = m.UserCourse(course_id=course_id, user_id=current_identity.id)
+        ucs.save()
+    return util.json_dumps(ucs.to_mongo())
+
+
 @api.route('/<string:course_id>/video', methods=['GET'])
 @jwt_required()
 def get_courses_video(course_id):
