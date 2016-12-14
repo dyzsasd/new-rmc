@@ -10,11 +10,17 @@ class UserCourse(me.Document):
     created_at = me.DateTimeField(default=datetime.utcnow)
 
     # TODO: change default to n
-    right = me.StringField(default='r')  # r, w, r/w, n
+    read = me.BooleanField(default=True)
+    edit = me.BooleanField(default=False)
+    admin = me.BooleanField(default=False)
 
     price = me.FloatField(default=9.99)
-    is_paied = me.BooleanField(default=False)
-    paied_at = me.DateTimeField()
 
     start_from = me.DateTimeField()
     expired_at = me.DateTimeField()
+
+    payment_token = me.StringField()
+    payment_token_expired = me.DateTimeField()
+    payment_success = me.BooleanField(default=False)
+    payer_id = me.stringField()
+    payment_at = me.DateTimeField()
