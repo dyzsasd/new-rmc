@@ -20,6 +20,7 @@ def get_payment_token(amt, return_url, cancel_url, currency='USD'):
     }
     response = requests.post(
         'https://api-3t.sandbox.paypal.com/nvp', data=token_generation_data)
+    print dict(urlparse.parse_qsl(response.text))
     token = dict(urlparse.parse_qsl(response.text))['TOKEN']
     return token
 

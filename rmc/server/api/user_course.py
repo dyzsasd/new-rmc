@@ -83,10 +83,11 @@ def get_courses_video(course_id):
 @jwt_required()
 def pay(course_id):
     course_id = course_id.lower()
-    ucs = m.UserCourse.objects(course_id=course_id, user_id=current_identity.id)
+    ucs = m.UserCourse.objects(course_id=course_id, user_id=current_identity.id).first()
+    referrer = flask.request.headers.get("Referer")
     if ucs and ucs.payment_success:
         return util.json_dumps({
-            'id': ucs._id,
+            'id': str(ucs._id),
             'is_paid': True,
             'token': ucs.payment_token,
             'payer_id': ucs.payer_id,
@@ -95,7 +96,7 @@ def pay(course_id):
     if not ucs:
         ucs = m.UserCourse(course_id=course_id, user_id=current_identity.id)
         ucs.save()
-    token = paypal_helper.get_payment_token()
+    token = paypal_helper.get_payment_token(ucs.price, referrer, referrer, currency='USD')
     ucs.payment_token = token
     ucs.save()
     return util.json_dumps({

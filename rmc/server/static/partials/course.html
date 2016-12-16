@@ -59,8 +59,8 @@
                 <div class="row">
                   <div class="col-xs-6" ng-show="false"><span>Score: </span> <span id="stars-existing" class="starrr">
                   </span></div>
-                  <div class="col-xs-6" ng-show="show_buy">
-                    <button class="btn btn-default pull-right">Trying for free until 15.12 !!</button>
+                  <div class="col-xs-6" ng-show="!user_course.payment_success">
+                    <button class="btn btn-default pull-right" ng-click="buy(course.id)">Buy now for 9,99</button>
                   </div>
                 </div>
               </div>

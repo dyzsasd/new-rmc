@@ -22,5 +22,5 @@ class UserCourse(me.Document):
     payment_token = me.StringField()
     payment_token_expired = me.DateTimeField()
     payment_success = me.BooleanField(default=False)
-    payer_id = me.stringField()
+    payer_id = me.StringField()
     payment_at = me.DateTimeField()

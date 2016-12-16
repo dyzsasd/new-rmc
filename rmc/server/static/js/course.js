@@ -12,7 +12,6 @@ angular.module('RmcUI.course', [
     $scope.videos = [];
     $scope.has_video = false;
     $scope.user_course = undefined;
-    $scope.show_buy = false;
 
     $scope.mediaToggle = {
       sources: [
@@ -107,6 +106,13 @@ angular.module('RmcUI.course', [
         });
     };
 
+    $scope.buy = function (course_id) {
+      UserCourse.pay({id: course_id}).$promise
+        .then(function (response) {
+          console.log(response);
+        })
+    };
+
 
   }])
 
@@ -126,9 +132,8 @@ angular.module('RmcUI.course', [
       {
         getUserCourse: {method :'GET', isArray: false, params: {handle: 'user_course'}},
         getVideos: {method: 'GET', isArray: true, params: {handle: 'video'}},
-        getVideoStream: {method: 'GET', isArray: false, params: {handle: 'stream'}}，
-        isPaid: {method: 'GET', isArray: false, params: {handle: 'ispaid'}}，
-        pay: {method: 'GET', isArray: false, params: {handle: 'pay'}}，
+        getVideoStream: {method: 'GET', isArray: false, params: {handle: 'stream'}},
+        pay: {method: 'GET', isArray: false, params: {handle: 'pay'}},
       }
   )}])
 
