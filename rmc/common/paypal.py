@@ -11,7 +11,7 @@ def get_payment_token(amt, return_url, cancel_url, currency='USD'):
         'SIGNATURE': paypal['SIGNATURE'],
         'SUBJECT': paypal['FACILITATOR_EMAIL'],
         'METHOD': 'SetExpressCheckout',
-        'VERSION': 93,
+        'VERSION': '93.0',
         'PAYMENTREQUEST_0_PAYMENTACTION': 'SALE',
         'PAYMENTREQUEST_0_AMT': amt,
         'PAYMENTREQUEST_0_CURRENCYCODE': currency,

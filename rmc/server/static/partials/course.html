@@ -59,7 +59,7 @@
                 <div class="row">
                   <div class="col-xs-6" ng-show="false"><span>Score: </span> <span id="stars-existing" class="starrr">
                   </span></div>
-                  <div class="col-xs-6" ng-show="!user_course.payment_success">
+                  <div class="col-xs-6" ng-show="!!user_course && !user_course.payment_success">
                     <button class="btn btn-default pull-right" ng-click="buy(course.id)">Buy now for 9,99</button>
                   </div>
                 </div>
@@ -89,3 +89,16 @@
     </div>
   </section>
   <!-- course video playlist end -->
+
+  <script type="text/ng-template" id="/course/pay.html">
+    <div class="modal-header">
+      <h3 class="modal-title">Payment information: course_id</h3>
+    </div>
+    <div class="modal-body" id="modal-body">
+      Get all video for {{ course_id }} for only {{ price }}
+    </div>
+    <div class="modal-footer" ng-show="!is_paid">
+      <a target="_blank" class="btn btn-info" role="button" ng-href="{{ payment_url }}">Pay Now with Paypal</a>
+      <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
+    </div>
+  </script>

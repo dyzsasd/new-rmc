@@ -3,8 +3,8 @@ angular.module('RmcUI.course', [
 ])
 
 .controller('CourseCtrl', [
-  '$scope', '$rootScope', '$modal', '$routeParams', 'Course', 'Prof', 'UserCourse', 'toaster',
-  function ($scope, $rootScope, $modal, $routeParams, Course, Prof, UserCourse, toaster) {
+  '$scope', '$rootScope', '$modal', '$routeParams', '$window', 'Course', 'Prof', 'UserCourse', 'toaster',
+  function ($scope, $rootScope, $modal, $routeParams, $window, Course, Prof, UserCourse, toaster) {
     var course_id = $routeParams.course_id;
 
     $scope.course = {};
@@ -109,7 +109,30 @@ angular.module('RmcUI.course', [
     $scope.buy = function (course_id) {
       UserCourse.pay({id: course_id}).$promise
         .then(function (response) {
-          console.log(response);
+          //$window.location.href ='https://www.sandbox.paypal.com/cgi-bin/webscr?cmd=_express-checkout&token=' + response.token
+          console.log(response)
+          $modal.open({
+            animation: true,
+            templateUrl: '/course/pay.html',
+            windowClass: 'center-modal',
+            size: 'sm',
+            resolve: {
+              paymentInfo: function () {
+                return response;
+              },
+            },
+            controller: [
+              '$scope', '$modalInstance', 'paymentInfo',
+              function (scope, $modalInstance, paymentInfo) {
+                scope.is_paid = paymentInfo.is_paid;
+                scope.price = paymentInfo.price;
+                scope.course_id = paymentInfo.course_id;
+                scope.payment_url = paymentInfo.payment_url;
+                scope.cancel = function () {
+                  $modalInstance.dismiss({$value: 'cancel'})
+                }
+              }]
+          });
         })
     };
 

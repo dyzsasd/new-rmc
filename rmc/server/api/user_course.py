@@ -5,8 +5,9 @@ import requests
 import rmc.common.paypal as paypal_helper
 import rmc.common.util as util
 import rmc.models as m
+from rmc.settings import paypal
 
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
 api = flask.Blueprint('user_course_api', __name__, url_prefix='/api/user_course')
@@ -51,7 +52,7 @@ def get_user_course(course_id):
     course_id = course_id.lower()
     ucs = m.UserCourse.objects(course_id=course_id, user_id=current_identity.id).first()
 
-    if ucs and ucs.payment_token and ucs.payment_token_expired < datetime.utcnow():
+    if ucs and ucs.payment_token and ucs.payment_token_expired and ucs.payment_token_expired < datetime.utcnow():
         payer_id = paypal_helper.check_payment(ucs.payment_token)
         if payer_id:
             ucs.payer_id = payer_id
@@ -87,23 +88,28 @@ def pay(course_id):
     referrer = flask.request.headers.get("Referer")
     if ucs and ucs.payment_success:
         return util.json_dumps({
-            'id': str(ucs._id),
+            'id': str(ucs.id),
             'is_paid': True,
             'token': ucs.payment_token,
             'payer_id': ucs.payer_id,
-            'payment_at': ucs.payment_at,
+            'price': ucs.price,
+            'course_id': course_id,
         })
     if not ucs:
         ucs = m.UserCourse(course_id=course_id, user_id=current_identity.id)
         ucs.save()
     token = paypal_helper.get_payment_token(ucs.price, referrer, referrer, currency='USD')
     ucs.payment_token = token
+    ucs.payment_token_expired = datetime.utcnow() + timedelta(hours=4)
     ucs.save()
     return util.json_dumps({
-        'id': ucs._id,
+        'id': ucs.id,
         'is_paid': False,
         'token': ucs.payment_token,
         'expiration': ucs.payment_token_expired,
+        'payment_url': paypal['url_template'] % token,
+        'price': ucs.price,
+        'course_id': course_id,
     })
 
 
