@@ -22,7 +22,6 @@ class VideoClient(object):
 
     def get_course_videos(self, course_id):
         subject, catalog = self._parse_course_id(course_id)
-        print self.endpoint + '/video/meta/list/%s/%s' % (subject, catalog)
         return requests.get(self.endpoint + '/video/meta/list/%s/%s' % (subject, catalog)).json
 
     def get_video(self, video_id):
@@ -46,6 +45,17 @@ class VideoClient(object):
 _video_client = VideoClient()
 
 
+@api.route('/<string:course_id>/user_course', methods=['GET'])
+@jwt_required()
+def get_user_course(course_id):
+    course_id = course_id.lower()
+    ucs = m.UserCourse.objects(course_id=course_id, user_id=current_identity.id).first()
+    if not ucs:
+        ucs = m.UserCourse(course_id=course_id, user_id=current_identity.id)
+        ucs.save()
+    return util.json_dumps(ucs.to_mongo())
+
+
 @api.route('/<string:course_id>/video', methods=['GET'])
 @jwt_required()
 def get_courses_video(course_id):
@@ -54,8 +64,7 @@ def get_courses_video(course_id):
     if not ucs:
         ucs = m.UserCourse(course_id=course_id, user_id=current_identity.id)
         ucs.save()
-    videos = _video_client.get_course_videos(course_id) or [{'id': '51ba004285814a34b6df663d6acf5c0b'}]
-    print videos
+    videos = _video_client.get_course_videos(course_id)
     video_metas = [
         _video_client.get_video(video['id']) for video in videos
     ]
