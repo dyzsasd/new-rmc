@@ -2,11 +2,12 @@ import flask
 from flask_jwt import jwt_required, current_identity
 import requests
 
+import rmc.common.paypal as paypal_helper
 import rmc.common.util as util
 import rmc.models as m
-from rmc.settings import VIDEO_TOKEN
+from rmc.settings import paypal
 
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
 api = flask.Blueprint('user_course_api', __name__, url_prefix='/api/user_course')
@@ -50,7 +51,14 @@ _video_client = VideoClient()
 def get_user_course(course_id):
     course_id = course_id.lower()
     ucs = m.UserCourse.objects(course_id=course_id, user_id=current_identity.id).first()
-    if not ucs:
+
+    if ucs and ucs.payment_token and ucs.payment_token_expired and ucs.payment_token_expired < datetime.utcnow():
+        payer_id = paypal_helper.check_payment(ucs.payment_token)
+        if payer_id:
+            ucs.payer_id = payer_id
+            ucs.payment_success = True
+            ucs.save()
+    elif not ucs:
         ucs = m.UserCourse(course_id=course_id, user_id=current_identity.id)
         ucs.save()
     return util.json_dumps(ucs.to_mongo())
@@ -70,6 +78,40 @@ def get_courses_video(course_id):
     ]
 
     return util.json_dumps(video_metas)
+
+
+@api.route('/<string:course_id>/pay', methods=['GET'])
+@jwt_required()
+def pay(course_id):
+    course_id = course_id.lower()
+    ucs = m.UserCourse.objects(course_id=course_id, user_id=current_identity.id).first()
+    referrer = flask.request.headers.get("Referer")
+    if ucs and ucs.payment_success:
+        return util.json_dumps({
+            'id': str(ucs.id),
+            'is_paid': True,
+            'token': ucs.payment_token,
+            'payer_id': ucs.payer_id,
+            'price': ucs.price,
+            'course_id': course_id,
+        })
+    if not ucs:
+        ucs = m.UserCourse(course_id=course_id, user_id=current_identity.id)
+        ucs.save()
+    token = paypal_helper.get_payment_token(ucs.price, referrer, referrer, currency='USD')
+    ucs.payment_token = token
+    ucs.payment_token_expired = datetime.utcnow() + timedelta(hours=4)
+    ucs.save()
+    return util.json_dumps({
+        'id': ucs.id,
+        'is_paid': False,
+        'token': ucs.payment_token,
+        'expiration': ucs.payment_token_expired,
+        'payment_url': paypal['url_template'] % token,
+        'price': ucs.price,
+        'course_id': course_id,
+    })
+
 
 @api.route('/<string:course_id>/stream', methods=['GET'])
 @jwt_required()
