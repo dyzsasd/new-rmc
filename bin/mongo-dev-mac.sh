@@ -1,10 +1,10 @@
 #!/bin/bash
 
-ROOT="$(readlink -m "$0/../..")"
+ROOT="$(greadlink -m "$0/../..")"
 
 MONGODB_VERSION="3.2.8"
-MONGODB_HOME="run/mongodb"
-MONGODB_URL="https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-${MONGODB_VERSION}.tgz"
+MONGODB_HOME="run/mongodb_mac"
+MONGODB_URL="https://fastdl.mongodb.org/osx/mongodb-osx-x86_64-${MONGODB_VERSION}.tgz"
 
 cd $ROOT
 mkdir -p $MONGODB_HOME
@@ -21,7 +21,7 @@ if [ ! -d "$MONGODB_VERSION" ]; then
 else
     cd "$MONGODB_VERSION"
 fi
-cd "mongodb-linux-x86_64-$MONGODB_VERSION"
+cd "mongodb-osx-x86_64-$MONGODB_VERSION"
 
 DBPATH="$ROOT/$MONGODB_HOME/mongodb"
 LOGPATH="$ROOT/$MONGODB_HOME/mongo.log"
