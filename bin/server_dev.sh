@@ -28,7 +28,8 @@ case "$COMMAND" in
           --virtualenv $ROOT/env \
           --buffer-size 32768 \
           --python-autoreload 1 \
-          --pidfile /tmp/rmc.pid 
+          --pidfile /tmp/rmc.pid \
+          --no-site
         ;;
     *)
 
