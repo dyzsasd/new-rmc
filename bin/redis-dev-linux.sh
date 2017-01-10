@@ -3,7 +3,7 @@
 ROOT="$(readlink -m "$0/../..")"
 
 REDIS_VERSION="stable"
-REDIS_HOME="run/redis"
+REDIS_HOME="run/redis-linux"
 REDIS_URL="http://download.redis.io/redis-${REDIS_VERSION}.tar.gz"
 
 cd $ROOT
