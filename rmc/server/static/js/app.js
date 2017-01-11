@@ -157,7 +157,7 @@ angular.module('RmcUI', [
 .factory('FBAuth', ['$q', '$window', function ($q, $window) {
   var fbApi = {}
   $window.FB.init({
-    appId      : '1859295840956010',
+    appId      : '119055615212269',
     cookie     : true,
     xfbml      : true,
     version    : 'v2.5'
@@ -260,7 +260,15 @@ angular.module('RmcUI', [
     }
   }])
 
-.run(['$http', '$cookies',
-  function ($http, $cookies) {
+.run(['$http', '$cookies', '$timeout',
+  function ($http, $cookies, $timeout) {
     $http.defaults.headers.common['_csrf_token'] = $cookies.csrftoken;
+    function init() {
+      $(".loader").fadeOut("fast");
+      $(".loader2").fadeOut("fast");
+    }
+    
+    $timeout(function () {
+      init();
+    }, 2000)
 }]);

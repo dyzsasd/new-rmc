@@ -19,7 +19,7 @@ def get_payment_token(amt, return_url, cancel_url, currency='USD'):
         'CANCELURL': cancel_url
     }
     response = requests.post(
-        'https://api-3t.sandbox.paypal.com/nvp', data=token_generation_data)
+        'https://api-3t.paypal.com/nvp', data=token_generation_data)
     print dict(urlparse.parse_qsl(response.text))
     token = dict(urlparse.parse_qsl(response.text))['TOKEN']
     return token
@@ -36,7 +36,7 @@ def check_payment(token):
         'TOKEN': token
     }
     response = requests.post(
-        'https://api-3t.sandbox.paypal.com/nvp', data=payment_check_data)
+        'https://api-3t.paypal.com/nvp', data=payment_check_data)
     result = dict(urlparse.parse_qsl(response.text))
     payer_id = result['PAYERID']
     return payer_id

@@ -53,8 +53,6 @@ angular.module('RmcUI.index', [])
             , itemsMobile: [767, 1]
             , stopOnHover: true
         });
-        $(".loader").fadeOut("fast");
-        $(".loader2").fadeOut("fast");
     };
 
     $timeout(function () {
