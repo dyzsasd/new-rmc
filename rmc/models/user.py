@@ -623,7 +623,6 @@ class User(me.Document):
         except me.queryset.NotUniqueError as e:
             raise User.UserCreationError('That email is already signed up.'
                     ' (Maybe you already signed up with Facebook?)')
-
         return user
 
     def __repr__(self):

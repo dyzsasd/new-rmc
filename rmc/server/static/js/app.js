@@ -50,8 +50,9 @@ angular.module('RmcUI', [
 }])
 
 .controller('NavCtrl', ['$scope', '$rootScope', '$http', '$location', '$route',
-  '$modal', '$window', 'UserClient', 'CurrentUser', 'FBAuth',
-  function ($scope, $rootScope, $http, $location, $route, $modal, $window, UserClient, CurrentUser, FBAuth) {
+  '$modal', '$window', 'UserClient', 'CurrentUser', 'FBAuth', 'toaster',
+  function ($scope, $rootScope, $http, $location, $route, $modal,
+            $window, UserClient, CurrentUser, FBAuth, toaster) {
 
   $scope.isAuthenticated = false;
 
@@ -97,7 +98,7 @@ angular.module('RmcUI', [
                   scope.error_message = response.data.description;
                 }
               }, function (err) {
-                  scope.error_message = err.data.description;
+                toaster.pop('error', err);
               })
           }
           scope.fbLogin = function () {
@@ -126,24 +127,13 @@ angular.module('RmcUI', [
             $http.post('/signup', user).then(
               function (response) {
                 if (response.status === 200) {
-                  return AuthService.login({
-                    email: user.email,
-                    password: user.password
-                  });
-                }
-              }, function (err) {
-                scope.error_message = err.data.description;
-              }
-            ).then(function (response) {
-                if (response && response.status_code === 200) {
+                  $window.localStorage.setItem('accessToken', response.data.accessToken);
                   $window.location.reload();
-                } else if (response === undefined) {
-                  scope.error_message = "email already used";
                 } else {
-                  scope.error_message = response.data.description;
+                  toaster.pop('error', response.data.error);
                 }
               }, function (err) {
-                scope.error_message = err.data.description;
+                toaster.pop('error', err);
               }
             )
           };
