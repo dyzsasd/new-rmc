@@ -19,7 +19,6 @@ from rmc.server.api import schedule as schedule_api
 from rmc.server.api import user as user_api
 from rmc.server.api import user_course as user_course_api
 import rmc.server.view_helpers as view_helpers
-from rmc.server.utils import parse_token
 
 
 _jwt = LocalProxy(lambda: app.extensions['jwt'])
@@ -41,11 +40,17 @@ app.register_blueprint(user_course_api.api)
 @app.route('/signup', methods=['POST'])
 def sign_up():
     user = flask.request.get_json()
-    print user
-    new_user = User.create_new_user_from_email(
-        user['first_name'], user['last_name'],
-        user['email'], user['password'])
-    return str(new_user.to_dict())
+    try:
+        new_user = User.create_new_user_from_email(
+            user['first_name'], user['last_name'],
+            user['email'], user['password'])
+        identity = UserToken(str(new_user.pk), new_user.email or '')
+        access_token = _jwt.jwt_encode_callback(identity)
+        return util.json_dumps({
+            'accessToken': access_token
+        })
+    except User.UserCreationError as e:
+        return util.json_dumps({ "error": str(e) }), 400
 
 
 @app.route('/login/facebook', methods=['POST'])
