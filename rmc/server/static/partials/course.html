@@ -21,6 +21,9 @@
             </div>
             <div class="col-sm-4">
               <div class="playlist-components">
+                <span ng-show="loading_video">
+                  <i class="fa fa-spinner fa-spin" style="font-size:48px"></i>
+                </span>
                 <div class="playlist">
                   <ul>
                     <li ng-repeat="video in videos">
@@ -55,13 +58,19 @@
                   </div>
                 </div>
               </div>
-              <div class="col-sm-6">
-                <div class="row">
+              <div class="row">
+                <div class="col-sm-6">
                   <div class="col-xs-6" ng-show="false"><span>Score: </span> <span id="stars-existing" class="starrr">
-                  </span></div>
+                    </span>
+                  </div>
                   <div class="col-xs-6" ng-show="!!user_course && !user_course.payment_success">
                     <button class="btn btn-default pull-right" ng-click="buy(course.id)">Buy now for 9,99</button>
                   </div>
+                  <form class="form-inline" ng-show="!!user_course && !user_course.payment_success">
+                    <input type="text" class="form-control pull-right inline" ng-model="promotion_code" placeholder="promotion code">
+                    <button class="btn btn-info pull-right" type="button"
+                            ng-click="usePromotionCode(promotion_code)">use</button>
+                  </form>
                 </div>
               </div>
             </div>
