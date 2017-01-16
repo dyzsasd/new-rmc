@@ -46,17 +46,29 @@ class VideoClient(object):
 _video_client = VideoClient()
 
 
+def _update_user_course(ucs):
+    if ucs.expired_at < datetime.utcnow():
+        ucs.read = False
+    ucs.save()
+    return ucs
+
+
 @api.route('/<string:course_id>/user_course', methods=['GET'])
 @jwt_required()
 def get_user_course(course_id):
     course_id = course_id.lower()
     ucs = m.UserCourse.objects(course_id=course_id, user_id=current_identity.id).first()
 
-    if ucs and ucs.payment_token and ucs.payment_token_expired and ucs.payment_token_expired < datetime.utcnow():
+    if ucs and not ucs.payment_success and ucs.payment_token and ucs.payment_token_expired and ucs.payment_token_expired < datetime.utcnow():
         payer_id = paypal_helper.check_payment(ucs.payment_token)
         if payer_id:
             ucs.payer_id = payer_id
             ucs.payment_success = True
+            ucs.read = True
+            ucs.payment_at = datetime.utcnow()
+            ucs.start_from = datetime.utcnow()
+            ucs.expired_at = datetime.utcnow() + timedelta(days=10000)
+            ucs.promotion_code = promotion_code['code']
             ucs.save()
     elif not ucs:
         ucs = m.UserCourse(course_id=course_id, user_id=current_identity.id)
@@ -65,19 +77,43 @@ def get_user_course(course_id):
 
 
 @api.route('/<string:course_id>/video', methods=['GET'])
-@jwt_required()
 def get_courses_video(course_id):
     course_id = course_id.lower()
-    ucs = m.UserCourse.objects(course_id=course_id, user_id=current_identity.id)
-    if not ucs:
-        ucs = m.UserCourse(course_id=course_id, user_id=current_identity.id)
-        ucs.save()
     videos = _video_client.get_course_videos(course_id)
     video_metas = [
         _video_client.get_video(video['id']) for video in videos
     ]
-
     return util.json_dumps(video_metas)
+
+
+@api.route('/<string:course_id>/promotion', methods=['POST'])
+@jwt_required()
+def use_promotion_code(course_id):
+    course_id = course_id.lower()
+    ucs = m.UserCourse.objects(course_id=course_id, user_id=current_identity.id).first()
+    promotion = util.json_loads(flask.request.data)
+    promotion_code = m.PromotionCode.objects(code=promotion['code']).first()
+
+    if not ucs:
+        ucs = m.UserCourse(course_id=course_id, user_id=current_identity.id)
+        ucs.save()
+
+    if not promotion_code or promotion_code.quantity <= 0:
+        flask.abort(403)
+
+    promotion_code.quantity = promotion_code.quantity - 1
+
+    if promotion_code._type == 'halfmonthfree':
+        ucs.payment_success = True
+        ucs.read = True
+        ucs.payment_at = datetime.utcnow()
+        ucs.start_from = datetime.utcnow()
+        ucs.expired_at = datetime.utcnow() + timedelta(days=31)
+        ucs.promotion_code = promotion_code['code']
+    ucs.save()
+    promotion_code.save()
+
+    return util.json_dumps(ucs.to_mongo())
 
 
 @api.route('/<string:course_id>/pay', methods=['GET'])
@@ -117,7 +153,12 @@ def pay(course_id):
 @jwt_required()
 def get_stream(course_id):
     course_id = course_id.lower()
+    ucs = m.UserCourse.objects(course_id=course_id, user_id=current_identity.id).first()
+    if not ucs:
+        flask.abort(403)
+    ucs = _update_user_course(ucs)
+    if not ucs.read:
+        flask.abort(403)
     _tk = flask.request.args.get('_tk')
     url = _video_client.get_stream(_tk, current_identity.id)
-    print url
     return util.json_dumps(url)

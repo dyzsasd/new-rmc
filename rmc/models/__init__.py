@@ -8,6 +8,7 @@ from points import PointSource  # @UnusedImport
 from user_schedule_item import UserScheduleItem  # @UnusedImport
 from user_schedule_item import FailedScheduleItem  # @UnusedImport
 from professor import Professor  # @UnusedImport
+from promotion_code import PromotionCode
 from rating import AggregateRating  # @UnusedImport
 from review import ProfessorReview  # @UnusedImport
 from review import CourseReview  # @UnusedImport
