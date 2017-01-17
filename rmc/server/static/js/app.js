@@ -256,7 +256,6 @@ angular.module('RmcUI', [
     function init() {
       $(".loader").fadeOut("fast");
       $(".loader2").fadeOut("fast");
-      console.log("testtest");
     }
     
     $timeout(function () {
