@@ -108,7 +108,7 @@ def use_promotion_code(course_id):
         ucs.read = True
         ucs.payment_at = datetime.utcnow()
         ucs.start_from = datetime.utcnow()
-        ucs.expired_at = datetime.utcnow() + timedelta(days=31)
+        ucs.expired_at = datetime.utcnow() + timedelta(days=15)
         ucs.promotion_code = promotion_code['code']
     ucs.save()
     promotion_code.save()
