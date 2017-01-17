@@ -1,10 +1,10 @@
 //jQuery is required to run this code
 $(document).ready(function () {
     /* page loader*/
-    //$(window).load(function () {
+    $(window).load(function () {
         // Animate loader off screen
-    //    $(".loader").fadeOut("slow");
-    //});
+        $(".loader").fadeOut("slow");
+    });
     scaleVideoContainer();
     initBannerVideoSize('.video-container .poster img');
     initBannerVideoSize('.video-container .filter');
