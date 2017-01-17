@@ -11,7 +11,7 @@ PYTHONPATH="$ROOT/..:$PYTHONPATH" \
     --wsgi-file $ROOT/rmc/server/server.wsgi \
     --callable app \
     --master \
-    --workers 8 \
+    --workers 16 \
     --close-on-exec \
     --enable-threads \
     --virtualenv $ROOT/env \
