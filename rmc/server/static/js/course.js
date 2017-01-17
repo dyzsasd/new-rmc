@@ -72,7 +72,7 @@ angular.module('RmcUI.course', [
               poster: 'images/screen.jpg'
             }
           } else if (response.status_code==403) {
-            toaster.pop('info', 'Please buy this course or use promotion code.')
+            toaster.pop('error', 'Please buy this course or use promotion code.')
           }
          }, function (error) {
             console.log(error)
@@ -121,7 +121,7 @@ angular.module('RmcUI.course', [
               poster: 'images/screen.jpg'
             }
           } else if (response.status_code==403) {
-            toaster.pop('info', 'Please buy this course or use promotion code.')
+            toaster.pop('error', 'Please buy this course or use promotion code.')
           }
         });
     };
