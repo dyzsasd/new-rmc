@@ -18,7 +18,7 @@ angular.module('RmcUI.course-overview', [])
 
       Course.get({course_id: course_id}).$promise
         .then(function (response) {
-          console.log('course:', response)
+          //console.log('course:', response)
           $scope.course = response;
           return Comment.getOwnComment({course_id: course_id}).$promise;
         })
@@ -36,12 +36,12 @@ angular.module('RmcUI.course-overview', [])
             $scope.courseComment.usefulness = 2.5
           else
             $scope.courseComment.usefulness = $scope.courseComment.usefulness * 5
-          console.log('courseComment:', response)
+        //  console.log('courseComment:', response)
           return ProfComment.getOwnComment({course_id: course_id}).$promise;
         })
         .then(function (response) {
           $scope.courseProfComment = response;
-          console.log('profComment:', response)
+         // console.log('profComment:', response)
           if (!$scope.courseProfComment.clarity)
             $scope.courseProfComment.clarity = 2.5
           else
@@ -53,7 +53,7 @@ angular.module('RmcUI.course-overview', [])
           return Prof.getProfs({'prof_id': $scope.course.professor_ids}).$promise
         })
         .then(function (response) {
-          console.log('profs: ', response)
+         // console.log('profs: ', response)
           $scope.profs = response;
         })
 

@@ -1,10 +1,11 @@
 //jQuery is required to run this code
 $(document).ready(function () {
     /* page loader*/
-    $(window).load(function () {
+    //$(window).load(function () {
         // Animate loader off screen
-        $(".loader").fadeOut("slow");
-    });
+    //    $(".loader").fadeOut("fast");
+    //    $(".loader2").fadeIn("fast");
+    //});
     scaleVideoContainer();
     initBannerVideoSize('.video-container .poster img');
     initBannerVideoSize('.video-container .filter');
@@ -16,6 +17,7 @@ $(document).ready(function () {
         scaleBannerVideoSize('.video-container video');
     });
 });
+
 
 function scaleVideoContainer() {
     var height = $(window).height() + 5;

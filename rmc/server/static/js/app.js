@@ -78,6 +78,10 @@ angular.module('RmcUI', [
       return "";
   };
 
+  $scope.removeLoader = function () {
+    $('.loader2').delay(1000).fadeOut("fast");
+  };
+
   $scope.login = function () {
     $modal.open({
       animation: true,
@@ -254,8 +258,8 @@ angular.module('RmcUI', [
   function ($http, $cookies, $timeout) {
     $http.defaults.headers.common['_csrf_token'] = $cookies.csrftoken;
     function init() {
-      $(".loader").fadeOut("fast");
-      $(".loader2").fadeOut("fast");
+      $(".loader").fadeOut("fast", function() { $(this).remove(); });
+      $(".loader2").fadeOut("fast", function() { $(this).remove(); });
     }
     
     $timeout(function () {

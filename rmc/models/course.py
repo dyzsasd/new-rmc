@@ -327,6 +327,7 @@ class Course(me.Document):
         keywords = params.get('keywords')
         sort_mode = params.get('sort_mode', 'popular')
         default_direction = _SORT_MODES_BY_NAME[sort_mode]['direction']
+        default_direction = 1
         direction = int(params.get('direction', default_direction))
         count = int(params.get('count', 10))
         offset = int(params.get('offset', 0))
@@ -347,9 +348,9 @@ class Course(me.Document):
             def regexify_keywords(keyword):
                 keyword = keyword.lower()
                 return re.compile('^%s' % re.escape(keyword))
-
             keyword_regexes = map(regexify_keywords, keywords_cleaned.split())
             filters['_keywords__all'] = keyword_regexes
+            k_list = keywords_cleaned.split()
 
         if exclude_taken_courses:
             if current_user:
@@ -401,7 +402,7 @@ class Course(me.Document):
             else:
                 sign = '-' if direction < 0 else ''
                 order_by = '%s%s' % (sign, sort_options['field'])
-
+            #first_courses = Course.objects(id__startswith=k_list[0]).limit(5)
             unsorted_courses = Course.objects(**filters)
             sorted_courses = unsorted_courses.order_by(order_by)
             courses = sorted_courses.skip(offset).limit(count)

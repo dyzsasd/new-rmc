@@ -51,9 +51,9 @@
                     <!-- Collect the nav links, forms, and other content for toggling -->
                     <div class="collapse navbar-collapse navbar-ex1-collapse">
                         <ul class="nav navbar-nav">
-                            <li class="{{ navButtonClass('/') }}"><a href="/">Home</a></li>
+                            <li class="{{ navButtonClass('/'); removeLoader(); }}"><a href="/">Home</a></li>
                             <li  class="{{ navButtonClass('/course') }}"><a href="/course">Explore Courses</a></li>
-                            <li><a href="#">Became a tutor?</a></li>
+                            <li><a href="https://goo.gl/forms/oN8kdr99s85ZA23g1">Become a tutor?</a></li>
                             <li>{{ route }}</li>
                         </ul>
                         <ul class="nav navbar-nav navbar-right" ng-show="!isAuthenticated">
@@ -88,10 +88,10 @@
             </div>
             <div class="col-sm-6">
                 <ul class="list-inline social-icons pull-right">
-                    <li><a href="#."><i class="fa fa-fw fa-facebook"></i></a></li>
-                    <li><a href="#."><i class="fa fa-fw fa-twitter"></i></a></li>
-                    <li><a href="#."><i class="fa fa-fw fa-google-plus"></i></a></li>
-                </ul>
+                    <li><a href="https://www.facebook.com/TopKowledgeInc/"><i class="fa fa-fw fa-facebook"></i></a></li>
+                    <li style="color:white;">Copyright 2017 © TopKnowledge All rights reserved</li>
+                	
+		</ul>
             </div>
         </div>
     </footer>
@@ -179,6 +179,12 @@
         </div>
     </script>
 
+    <script type="text/javascript"> 
+      $(document).ready( function() {
+        $('.loader').delay(100).fadeOut();
+        $('.loader2').delay(100).fadeOut();
+      });
+    </script>
 </body>
 
 </html>
